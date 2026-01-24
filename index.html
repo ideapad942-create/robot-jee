@@ -3,245 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microstock Metadata Generator - Groq API (Fix)</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <title>Microstock Generator Pro - Batching System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .tab-btn.active { border-bottom: 2px solid #2563eb; color: #2563eb; }
+        /* Animasi Progress Bar */
+        @keyframes progress-stripes {
+            from { background-position: 1rem 0; }
+            to { background-position: 0 0; }
+        }
+        .animate-stripes {
+            background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+            background-size: 1rem 1rem;
+            animation: progress-stripes 1s linear infinite;
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen p-4 md:p-8">
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
 
-    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-        <div class="flex border-b bg-gray-100 overflow-x-auto">
-            <button onclick="openTab('api-tab')" id="btn-api-tab" class="tab-btn active px-6 py-3 font-medium whitespace-nowrap">1. Konfigurasi API</button>
-            <button onclick="openTab('input-tab')" id="btn-input-tab" class="tab-btn px-6 py-3 font-medium whitespace-nowrap">2. Input Perintah</button>
-            <button onclick="openTab('output-tab')" id="btn-output-tab" class="tab-btn px-6 py-3 font-medium whitespace-nowrap">3. Hasil & Export</button>
+    <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
+        <div class="bg-blue-900 p-4 text-white">
+            <h1 class="text-xl font-bold">Microstock Metadata Generator (Batch V3)</h1>
+            <p class="text-xs text-blue-200">Solusi untuk generate jumlah banyak tanpa terpotong.</p>
+        </div>
+
+        <div class="flex border-b bg-gray-50">
+            <button onclick="openTab('api-tab')" id="btn-api-tab" class="tab-btn active w-1/3 py-4 font-medium hover:bg-gray-100 transition">1. API Key</button>
+            <button onclick="openTab('input-tab')" id="btn-input-tab" class="tab-btn w-1/3 py-4 font-medium hover:bg-gray-100 transition">2. Input Perintah</button>
+            <button onclick="openTab('output-tab')" id="btn-output-tab" class="tab-btn w-1/3 py-4 font-medium hover:bg-gray-100 transition">3. Hasil</button>
         </div>
 
         <div class="p-6">
             <div id="api-tab" class="tab-content active">
-                <h2 class="text-xl font-bold mb-4">Pengaturan API Groq</h2>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Masukkan API Key Groq:</label>
-                    <input type="password" id="api-key" placeholder="gsk_xxxx..." class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500">
-                    <p class="text-xs text-gray-500 mt-1">Key Anda tersimpan sementara di browser, aman.</p>
-                </div>
-                <div class="bg-blue-50 p-4 rounded-md border border-blue-200">
-                    <p class="text-sm text-blue-800">
-                        <strong>Belum punya API Key?</strong><br>
-                        Generate gratis di sini: 
-                        <a href="[https://console.groq.com/keys](https://console.groq.com/keys)" target="_blank" class="underline font-bold text-blue-600">Groq Console Keys</a>
-                    </p>
-                </div>
-                <button onclick="openTab('input-tab')" class="mt-6 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">Lanjut ke Input</button>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Groq API Key</label>
+                <input type="password" id="api-key" placeholder="gsk_..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 mb-2">
+                <p class="text-xs text-gray-500">Key disimpan sementara di browser Anda.</p>
+                <button onclick="openTab('input-tab')" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Lanjut</button>
             </div>
 
             <div id="input-tab" class="tab-content">
-                <h2 class="text-xl font-bold mb-4">Generate Metadata</h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Perintah Utama (Contoh: "50 title lens flare"):</label>
-                        <textarea id="main-prompt" rows="3" class="w-full p-2 border rounded-md mt-1" placeholder="Masukkan instruksi jumlah dan jenis asset..."></textarea>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="flex items-center p-3 border rounded bg-gray-50">
-                            <input type="checkbox" id="gen-desc" class="w-4 h-4 text-blue-600">
-                            <label for="gen-desc" class="ml-2 text-sm">Generate Deskripsi (150-200 kata)</label>
-                        </div>
-                        <div class="flex items-center p-3 border rounded bg-gray-50">
-                            <input type="checkbox" id="gen-key" checked class="w-4 h-4 text-blue-600">
-                            <label for="gen-key" class="ml-2 text-sm">Generate Keywords (41 kata/item)</label>
-                        </div>
-                    </div>
-
-                    <button id="process-btn" onclick="generateMetadata()" class="w-full bg-green-600 text-white py-3 rounded-md font-bold hover:bg-green-700 transition">
-                        Mulai Generate Sekarang
-                    </button>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Topik Utama / Kata Kunci Aset</label>
+                    <input type="text" id="topic-input" placeholder="Contoh: Light leak transitions" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg">
+                    <p class="text-xs text-gray-500 mt-1">Hanya masukkan topik (misal: "Bokeh Overlay"). Jumlah diatur di bawah.</p>
                 </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Jumlah Total Aset</label>
+                        <input type="number" id="total-count" value="50" min="1" max="500" class="w-full p-3 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Bahasa Output</label>
+                        <select id="language" class="w-full p-3 border rounded-lg bg-white">
+                            <option value="English">Inggris (Recommended for Microstock)</option>
+                            <option value="Indonesia">Indonesia</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 mb-6">
+                    <label class="flex items-center space-x-2 cursor-pointer bg-gray-50 p-3 rounded border w-full">
+                        <input type="checkbox" id="gen-desc" checked class="w-5 h-5 text-blue-600 rounded">
+                        <span>Generate Deskripsi (Detail & Panjang)</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer bg-gray-50 p-3 rounded border w-full">
+                        <input type="checkbox" id="gen-key" checked class="w-5 h-5 text-blue-600 rounded">
+                        <span>Generate Keywords (41 Kata)</span>
+                    </label>
+                </div>
+
+                <button onclick="startBatchGeneration()" class="w-full bg-green-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-green-700 shadow-lg transition transform active:scale-95">
+                    MULAI GENERATE
+                </button>
             </div>
 
             <div id="output-tab" class="tab-content">
+                <div id="status-container" class="hidden mb-6">
+                    <div class="flex justify-between text-sm font-bold mb-1">
+                        <span id="status-text">Memproses...</span>
+                        <span id="progress-text">0/50</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                        <div id="progress-bar" class="bg-blue-600 h-4 rounded-full transition-all duration-500 animate-stripes" style="width: 0%"></div>
+                    </div>
+                </div>
+
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold">Hasil Metadata</h2>
-                    <button onclick="downloadCSV()" id="download-btn" class="hidden bg-black text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800">
+                    <h2 class="text-xl font-bold text-gray-800">Hasil <span id="result-count" class="text-sm font-normal text-gray-500">(0 item)</span></h2>
+                    <button onclick="downloadCSV()" id="download-btn" class="hidden bg-black text-white px-5 py-2 rounded hover:bg-gray-800 flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         Download CSV
                     </button>
                 </div>
-                
-                <div id="loading-state" class="hidden text-center py-10">
-                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto"></div>
-                    <p class="mt-2 text-gray-600">Sedang memproses... (bisa memakan waktu 10-30 detik)</p>
-                </div>
 
-                <div id="result-area" class="space-y-4 max-h-[500px] overflow-y-auto border p-4 rounded bg-gray-50 text-sm">
-                    <p class="text-gray-400 italic">Hasil generate akan muncul di sini...</p>
+                <div id="result-area" class="space-y-3 h-[500px] overflow-y-auto pr-2">
+                    <div class="text-center text-gray-400 py-10">Belum ada data. Silakan input perintah.</div>
                 </div>
-                
-                <div id="debug-area" class="mt-4 p-2 bg-red-50 text-red-600 text-xs hidden border border-red-200"></div>
             </div>
         </div>
     </div>
 
     <script>
-        let generatedData = [];
+        let allResults = [];
+        let isProcessing = false;
 
         function openTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             document.getElementById('btn-' + tabId).classList.add('active');
         }
 
-        async function generateMetadata() {
+        async function startBatchGeneration() {
             const apiKey = document.getElementById('api-key').value.trim();
-            const mainPrompt = document.getElementById('main-prompt').value;
-            const needDesc = document.getElementById('gen-desc').checked;
-            const needKey = document.getElementById('gen-key').checked;
+            const topic = document.getElementById('topic-input').value.trim();
+            const totalTarget = parseInt(document.getElementById('total-count').value);
+            const useDesc = document.getElementById('gen-desc').checked;
+            const useKey = document.getElementById('gen-key').checked;
+            const lang = document.getElementById('language').value;
 
-            if (!apiKey) return alert("Harap masukkan API Key!");
-            if (!mainPrompt) return alert("Harap masukkan perintah!");
+            if (!apiKey) return alert("API Key wajib diisi!");
+            if (!topic) return alert("Topik/Keyword wajib diisi!");
 
-            // UI Reset
+            // Reset State
+            allResults = [];
+            isProcessing = true;
             openTab('output-tab');
-            document.getElementById('loading-state').classList.remove('hidden');
-            document.getElementById('result-area').innerHTML = '';
-            document.getElementById('debug-area').classList.add('hidden');
+            document.getElementById('status-container').classList.remove('hidden');
             document.getElementById('download-btn').classList.add('hidden');
-
-            // STRICT JSON INSTRUCTION
-            // Kita memaksa AI membungkus array dalam object {"assets": [...]}
-            let instructions = `Anda adalah mesin generator JSON metadata Microstock. 
-            Tugas: Buat metadata berdasarkan permintaan user: "${mainPrompt}".
+            document.getElementById('result-area').innerHTML = '';
             
-            ATURAN OUTPUT:
-            1. Output WAJIB HANYA berupa JSON yang valid. Jangan ada teks lain sebelum/sesudah JSON.
-            2. Struktur JSON harus persis seperti ini:
-            {
-              "assets": [
-                {
-                  "title": "Judul fungsi asset (max 100 chars, no color/object names)",
-                  ${needDesc ? '"description": "Deskripsi teknis (150-200 kata)",' : ''}
-                  ${needKey ? '"keywords": "keyword1, keyword2, ... (total 41 kata dipisah koma)",' : ''}
-                }
-              ]
-            }
-            3. Jika user minta 50, buat array berisi 50 item.
-            4. Jangan gunakan markdown block (\`\`\`json). Cukup raw text JSON.`;
+            // Konfigurasi Batch
+            // Kita generate 5 item per request agar kualitas maksimal dan tidak kena limit token
+            const batchSize = 5; 
+            let currentCount = 0;
 
-            try {
-                const response = await fetch('[https://api.groq.com/openai/v1/chat/completions](https://api.groq.com/openai/v1/chat/completions)', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model: "llama-3.3-70b-versatile",
-                        messages: [
-                            { role: "system", content: instructions },
-                            { role: "user", content: "Mulai generate sesuai instruksi sistem." }
-                        ],
-                        temperature: 0.5, // Mengurangi kreatifitas liar agar format JSON stabil
-                        response_format: { type: "json_object" }
-                    })
-                });
+            updateProgress(0, totalTarget, "Memulai...");
 
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                let rawContent = data.choices[0].message.content;
-
-                // CLEANUP: Kadang AI tetap memberi markdown block ```json ... ```
-                rawContent = rawContent.replace(/```json/g, "").replace(/```/g, "").trim();
-
-                let parsedContent;
-                try {
-                    parsedContent = JSON.parse(rawContent);
-                } catch (e) {
-                    // Jika parsing gagal, tampilkan raw text untuk debug
-                    document.getElementById('debug-area').innerText = "Gagal Parse JSON. Raw Output:\n" + rawContent;
-                    document.getElementById('debug-area').classList.remove('hidden');
-                    throw new Error("Format JSON dari AI rusak. Coba generate ulang.");
-                }
+            while (currentCount < totalTarget && isProcessing) {
+                const remaining = totalTarget - currentCount;
+                const thisBatchSize = Math.min(batchSize, remaining); // Ambil 5 atau sisa
                 
-                // DATA EXTRACTION (Fix untuk error items.map)
-                // Kita cari key 'assets', atau 'items', atau 'data'.
-                let items = parsedContent.assets || parsedContent.items || parsedContent.data;
+                updateProgress(currentCount, totalTarget, `Sedang generate item ${currentCount + 1} sampai ${currentCount + thisBatchSize}...`);
 
-                // Fallback: Jika ternyata root-nya langsung array
-                if (!items && Array.isArray(parsedContent)) {
-                    items = parsedContent;
+                try {
+                    const batchResult = await fetchFromGroq(apiKey, topic, thisBatchSize, useDesc, useKey, lang, currentCount);
+                    
+                    if (batchResult && batchResult.length > 0) {
+                        allResults = [...allResults, ...batchResult];
+                        currentCount += batchResult.length;
+                        renderResults(allResults); // Render real-time
+                    } else {
+                        console.warn("Batch kosong, mencoba ulang...");
+                    }
+
+                } catch (error) {
+                    console.error(error);
+                    alert("Terjadi error pada batch ini. Melanjutkan batch berikutnya...");
                 }
 
-                // Validasi akhir
-                if (!items || !Array.isArray(items)) {
-                    console.log("Struktur JSON diterima:", parsedContent);
-                    throw new Error("Struktur JSON tidak dikenali (bukan array). Cek Console F12.");
-                }
-
-                generatedData = items;
-                displayResults(items);
-                document.getElementById('download-btn').classList.remove('hidden');
-
-            } catch (error) {
-                alert("Terjadi kesalahan: " + error.message);
-                console.error(error);
-            } finally {
-                document.getElementById('loading-state').classList.add('hidden');
+                // Sedikit delay agar API tidak rate limit
+                await new Promise(r => setTimeout(r, 1000));
             }
+
+            updateProgress(totalTarget, totalTarget, "Selesai!");
+            document.getElementById('progress-bar').classList.remove('animate-stripes');
+            document.getElementById('download-btn').classList.remove('hidden');
+            isProcessing = false;
         }
 
-        function displayResults(items) {
-            const container = document.getElementById('result-area');
-            
-            if (items.length === 0) {
-                container.innerHTML = '<p class="text-red-500">Hasil kosong.</p>';
-                return;
-            }
+        function updateProgress(current, total, text) {
+            const percent = (current / total) * 100;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+            document.getElementById('progress-text').innerText = `${current}/${total}`;
+            document.getElementById('status-text').innerText = text;
+            document.getElementById('result-count').innerText = `(${current} item)`;
+        }
 
+        async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, lang, offset) {
+            // PROMPT ENGINEERING TINGKAT LANJUT
+            // Kita menyuruh AI membuat variasi spesifik agar tidak repetitif
+            const systemPrompt = `Anda adalah ahli metadata Microstock. 
+            Tugas: Buat ${count} set metadata untuk aset "${topic}".
+            
+            INSTRUKSI PENTING:
+            1. TITLE: Jangan gunakan angka urut (seperti "Title 1", "Leak 2").
+               - Gunakan variasi Long-Tail Keyword yang relevan.
+               - Contoh jika topik "Light Leak": "Cinematic Light Leak Overlay", "Vintage Film Burn Transition", "Soft Bokeh Light Leak for Editing".
+               - Fokus pada FUNGSI dan GAYA.
+               - Panjang Title < 100 karakter.
+            
+            2. DESCRIPTION: ${useDesc ? 'Wajib 150-200 kata per item. Jelaskan penggunaan teknis, cocok untuk project apa, nuansa visual, dll. Jangan repetitif.' : 'Tidak perlu.'}
+            
+            3. KEYWORDS: ${useKey ? 'Wajib 41 kata kunci dipisah koma. Relevan dan beragam.' : 'Tidak perlu.'}
+
+            4. Bahasa output: ${lang}.
+
+            OUTPUT WAJIB JSON FORMAT:
+            {
+              "assets": [
+                { "title": "...", "description": "...", "keywords": "..." }
+              ]
+            }
+            `;
+
+            const userPrompt = `Buatkan batch ${count} item berikutnya (Item ke-${offset+1} sampai ${offset+count}) untuk topik "${topic}". Pastikan variasi judul berbeda dari yang umum.`;
+
+            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: "llama-3.3-70b-versatile", // Model cerdas
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: userPrompt }
+                    ],
+                    temperature: 0.7, // Agak kreatif agar judul bervariasi
+                    response_format: { type: "json_object" }
+                })
+            });
+
+            const data = await response.json();
+            const content = JSON.parse(data.choices[0].message.content);
+            return content.assets || content.items || [];
+        }
+
+        function renderResults(items) {
+            const container = document.getElementById('result-area');
             container.innerHTML = items.map((item, index) => `
-                <div class="p-4 border-b border-gray-200 bg-white rounded mb-2 shadow-sm">
-                    <div class="flex justify-between">
-                        <span class="font-bold text-blue-600">Asset #${index + 1}</span>
-                        <span class="text-xs text-gray-400">Title Length: ${item.title ? item.title.length : 0}</span>
+                <div class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-bold text-lg text-blue-700 w-3/4">${index + 1}. ${item.title}</h3>
+                        <span class="text-xs font-mono bg-gray-100 px-2 py-1 rounded text-gray-500">
+                            Len: ${item.title.length} chars
+                        </span>
                     </div>
-                    <p class="mt-1"><strong>Title:</strong> ${item.title || '-'}</p>
-                    ${item.description ? `<p class="mt-2 text-gray-700 text-xs text-justify bg-gray-50 p-2 rounded"><strong>Desc:</strong> ${item.description}</p>` : ''}
-                    ${item.keywords ? `<p class="mt-2 text-green-700 text-xs"><strong>Keywords:</strong> ${item.keywords}</p>` : ''}
+                    
+                    ${item.description ? `
+                        <div class="mb-3">
+                            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Deskripsi</p>
+                            <p class="text-sm text-gray-700 leading-relaxed text-justify border-l-4 border-blue-200 pl-3">
+                                ${item.description}
+                            </p>
+                        </div>
+                    ` : ''}
+
+                    ${item.keywords ? `
+                        <div>
+                            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">
+                                Keywords <span class="text-blue-500">(${item.keywords.split(',').length} kata)</span>
+                            </p>
+                            <p class="text-xs text-green-700 bg-green-50 p-2 rounded leading-loose">
+                                ${item.keywords}
+                            </p>
+                        </div>
+                    ` : ''}
                 </div>
             `).join('');
+            
+            // Auto scroll ke bawah agar terlihat prosesnya
+            container.scrollTop = container.scrollHeight;
         }
 
         function downloadCSV() {
-            if (generatedData.length === 0) return;
-
-            let csvContent = "data:text/csv;charset=utf-8,";
+            if (allResults.length === 0) return;
             
-            // Ambil headers dinamis dari item pertama
-            const headers = Object.keys(generatedData[0]);
-            csvContent += headers.join(",") + "\r\n";
+            // CSV Header
+            let headers = ["Title"];
+            if (allResults[0].description) headers.push("Description");
+            if (allResults[0].keywords) headers.push("Keywords");
 
-            // Buat baris
-            generatedData.forEach(item => {
-                const row = headers.map(header => {
-                    let val = item[header] ? item[header].toString() : '';
-                    // Escape tanda kutip ganda (") menjadi ("") agar CSV valid
-                    val = val.replace(/"/g, '""');
-                    // Bungkus setiap field dengan tanda kutip
-                    return `"${val}"`;
-                });
+            let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
+
+            allResults.forEach(item => {
+                let row = [];
+                row.push(`"${(item.title || '').replace(/"/g, '""')}"`);
+                if (item.description) row.push(`"${(item.description || '').replace(/"/g, '""')}"`);
+                if (item.keywords) row.push(`"${(item.keywords || '').replace(/"/g, '""')}"`);
+                
                 csvContent += row.join(",") + "\r\n";
             });
 
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `microstock_metadata_${new Date().getTime()}.csv`);
+            link.setAttribute("download", `metadata_${document.getElementById('topic-input').value}_${allResults.length}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
