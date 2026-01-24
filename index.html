@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microstock Generator Pro - Smart Logic V5</title>
+    <title>Microstock Generator Pro - Functional Titles V6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .tab-btn.active { border-bottom: 2px solid #2563eb; color: #2563eb; }
-        /* Animasi Progress Bar */
         @keyframes progress-stripes {
             from { background-position: 1rem 0; }
             to { background-position: 0 0; }
@@ -25,8 +24,8 @@
 
     <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
         <div class="bg-blue-900 p-4 text-white">
-            <h1 class="text-xl font-bold">Microstock Metadata Generator (V5 - Strict Selection)</h1>
-            <p class="text-xs text-blue-200">Fitur: Checkbox Logic (Hanya generate yang diminta) & Keyword Safety Net (Pasti 39-42).</p>
+            <h1 class="text-xl font-bold">Microstock Metadata Generator (V6 - Functional Titles)</h1>
+            <p class="text-xs text-blue-200">Fitur Baru: Title Lock (Judul = Keyword Utama + Fungsi) & Smart Checkbox CSV.</p>
         </div>
 
         <div class="flex border-b bg-gray-50">
@@ -46,8 +45,8 @@
             <div id="input-tab" class="tab-content">
                 <div class="mb-6">
                     <label class="block text-sm font-bold text-gray-700 mb-2">Topik Utama (Main Keyword)</label>
-                    <input type="text" id="topic-input" placeholder="Contoh: Light leak transitions" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg">
-                    <p class="text-xs text-gray-500 mt-1">Pastikan ini kata kunci utama yang ingin dipertahankan.</p>
+                    <input type="text" id="topic-input" placeholder="Contoh: film burn transitions" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg">
+                    <p class="text-xs text-blue-600 mt-1 font-semibold">Tips: Masukkan kata dasar saja (misal: "film burn transitions"). Script akan menambahkan fungsi di belakangnya.</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mb-6">
@@ -66,7 +65,7 @@
                 <div class="flex gap-4 mb-6">
                     <label class="flex items-center space-x-2 cursor-pointer bg-gray-50 p-3 rounded border w-full hover:bg-blue-50 transition border-gray-300">
                         <input type="checkbox" id="gen-desc" class="w-5 h-5 text-blue-600 rounded">
-                        <span>Generate Deskripsi (150 words)</span>
+                        <span>Generate Deskripsi</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer bg-gray-50 p-3 rounded border w-full hover:bg-blue-50 transition border-gray-300">
                         <input type="checkbox" id="gen-key" checked class="w-5 h-5 text-blue-600 rounded">
@@ -108,11 +107,11 @@
     <script>
         let allResults = [];
         let isProcessing = false;
-
-        // Kata kunci cadangan jika AI kurang memberikan jumlah yang pas (Failsafe)
+        
+        // Backup keywords jika AI kurang memberi jumlah tag
         const BACKUP_KEYWORDS = [
             "footage", "video", "clip", "stock", "creative", "digital", "multimedia", 
-            "content", "editorial", "commercial", "visual", "art", "design", "graphic",
+            "content", "visual", "art", "design", "graphic", "backdrop", "effect",
             "background", "texture", "abstract", "modern", "production", "element"
         ];
 
@@ -132,9 +131,8 @@
 
             if (!apiKey) return alert("API Key wajib diisi!");
             if (!topic) return alert("Topik/Keyword wajib diisi!");
-            if (!useDesc && !useKey) return alert("Pilih minimal satu: Deskripsi atau Keywords!");
+            if (!useDesc && !useKey) return alert("Pilih minimal satu output (Deskripsi/Keywords)!");
 
-            // Reset State
             allResults = [];
             isProcessing = true;
             openTab('output-tab');
@@ -163,10 +161,9 @@
                     } else {
                         console.warn("Batch kosong, mencoba ulang...");
                     }
-
                 } catch (error) {
                     console.error(error);
-                    alert("Terjadi error koneksi ke Groq. Cek API Key.");
+                    alert("Terjadi error. Cek koneksi/API Key.");
                     isProcessing = false;
                 }
 
@@ -191,18 +188,10 @@
 
         async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, offset) {
             
-            // --- DYNAMIC PROMPT CONSTRUCTION ---
-            // Kita membangun JSON structure template berdasarkan apa yang dicentang user
-            let outputFields = [`"title": "${topic} + [Variasi Fungsi]"`];
-            
-            if (useDesc) {
-                outputFields.push(`"description": "Penjelasan fungsi visual max 150 kata..."`);
-            }
-            
-            if (useKey) {
-                // Trik: Minta 60 keyword agar kita bisa memotongnya nanti (lebih mudah memotong daripada menambah)
-                outputFields.push(`"keywords": "keyword1, keyword2, ... (Berikan 60 keywords relevan)"`);
-            }
+            // --- KONSTRUKSI OUTPUT JSON DINAMIS ---
+            let outputFields = [`"title": "WAJIB: ${topic} + [Fungsi/Keterangan]"`];
+            if (useDesc) outputFields.push(`"description": "Deskripsi teknis..."`);
+            if (useKey) outputFields.push(`"keywords": "keyword1, keyword2..."`);
 
             const jsonTemplate = `{
               "assets": [
@@ -212,25 +201,34 @@
               ]
             }`;
 
+            // --- PERUBAHAN UTAMA: SYSTEM PROMPT LEBIH KETAT UNTUK TITLE ---
             const mainKeywordsArr = topic.split(/\s+/).join(", ");
             
             const systemPrompt = `Anda adalah Pakar Metadata Microstock.
-            Tugas: Buat ${count} item metadata untuk aset: "${topic}".
+            Tugas: Buat ${count} item metadata untuk topik: "${topic}".
             
-            ATURAN:
-            1. TITLE: Wajib mengandung "${topic}". Buat variasi unik. Max 100 chars.
+            ATURAN UTAMA TITLE (SANGAT PENTING):
+            1. STRUKTUR: Mulai judul DENGAN PERSIS kata "${topic}", lalu ikuti dengan kata penghubung (for, with, in, suitable for, isolated on) dan KEGUNAAN/FUNGSI.
+            2. CONTOH BENAR (Jika topik "film burn"):
+               - "film burn for video editing overlays"
+               - "film burn with vintage light leak effect"
+               - "film burn isolated on black background"
+               - "film burn for cinematic intro transition"
+            3. LARANGAN: JANGAN menaruh kata sifat di DEPAN topik. 
+               - SALAH: "Cinematic film burn" (Jangan lakukan ini!)
+               - SALAH: "Retro film burn" (Jangan lakukan ini!)
+            4. VARIASI: Pastikan akhiran (suffix) berbeda-beda untuk setiap item. Jangan ulangi "for overlays" terus menerus.
             
-            ${useDesc ? `2. DESCRIPTION: Jelaskan fungsi teknis & visual. Bahasa Inggris Formal.` : ''}
+            ${useDesc ? `ATURAN DESCRIPTION: Jelaskan fungsi teknis. Max 150 kata.` : ''}
             
-            ${useKey ? `3. KEYWORDS: 
-               - Berikan SEBANYAK MUNGKIN kata kunci relevan (Target 50-60 kata). 
-               - Wajib diawali dengan: "${mainKeywordsArr}".
-               - Format: dipisah koma, huruf kecil.` : ''}
+            ${useKey ? `ATURAN KEYWORDS: 
+               - Berikan 50-60 kata kunci relevan (nanti akan dipotong otomatis).
+               - Wajib diawali kata: "${mainKeywordsArr}".` : ''}
 
-            OUTPUT WAJIB JSON SESUAI TEMPLATE INI (JANGAN UBAH KEY):
+            OUTPUT JSON ONLY:
             ${jsonTemplate}`;
 
-            const userPrompt = `Generate batch ${count} item (Variasi ke-${offset+1}). Ingat, hanya field yang diminta.`;
+            const userPrompt = `Generate batch ${count} item (Variasi ke-${offset+1}). Ingat: Title harus dimulai dengan "${topic}".`;
 
             const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
@@ -244,7 +242,7 @@
                         { role: "system", content: systemPrompt },
                         { role: "user", content: userPrompt }
                     ],
-                    temperature: 0.6,
+                    temperature: 0.7, // Kreativitas sedikit tinggi agar suffix bervariasi
                     response_format: { type: "json_object" }
                 })
             });
@@ -256,83 +254,80 @@
                 items = content.assets || content.items || [];
             } catch (e) { return []; }
 
-            // --- JAVASCRIPT POST-PROCESSING (THE FIX) ---
+            // --- JAVASCRIPT POST-PROCESSING ---
             return items.map(item => {
-                // Hapus field yang tidak diminta (jaga-jaga jika AI berhalusinasi memberikannya)
+                // Bersihkan field tak terpakai
                 if (!useDesc) delete item.description;
                 if (!useKey) delete item.keywords;
 
-                // LOGIKA KEYWORD SAFETY NET
+                // FORCE TITLE CHECK (Jaga-jaga AI bandel)
+                // Jika title tidak dimulai dengan topik, kita paksa taruh di depan
+                if (item.title && !item.title.toLowerCase().startsWith(topic.toLowerCase())) {
+                    // Hapus topik jika ada di tengah/belakang agar tidak double
+                    let cleanTitle = item.title.replace(new RegExp(topic, 'gi'), '').trim();
+                    item.title = `${topic} ${cleanTitle}`;
+                }
+
+                // KEYWORD SAFETY NET (Min 39, Max 42)
                 if (useKey && item.keywords) {
                     let tags = item.keywords.split(',').map(s => s.trim().toLowerCase()).filter(s => s.length > 0);
                     
-                    // 1. Pastikan main keyword ada di depan
                     const mainWords = topic.toLowerCase().split(/\s+/);
                     tags = tags.filter(t => !mainWords.includes(t)); 
                     tags = [...mainWords, ...tags];
 
-                    // 2. Cek Jumlah
-                    // Jika kurang dari 39, ambil dari BACKUP_KEYWORDS
+                    // Fill jika kurang
                     if (tags.length < 39) {
                         let needed = 39 - tags.length;
                         let extras = BACKUP_KEYWORDS.filter(k => !tags.includes(k)).slice(0, needed);
                         tags = [...tags, ...extras];
                     }
 
-                    // 3. Jika lebih dari 42, potong
+                    // Trim jika lebih
                     if (tags.length > 42) {
                         tags = tags.slice(0, 42);
                     }
 
                     item.keywords = tags.join(', ');
                 }
-
                 return item;
             });
         }
 
         function renderResults(items) {
             const container = document.getElementById('result-area');
-            
-            // Cek field apa saja yang ada di item pertama untuk menentukan tampilan
-            const hasDesc = items.length > 0 && items[0].hasOwnProperty('description');
-            const hasKey = items.length > 0 && items[0].hasOwnProperty('keywords');
+            const hasDesc = items[0] && items[0].description !== undefined;
+            const hasKey = items[0] && items[0].keywords !== undefined;
 
             container.innerHTML = items.map((item, index) => {
-                let keySection = '';
+                let keyHtml = '', descHtml = '';
+
                 if (hasKey && item.keywords) {
                     const count = item.keywords.split(',').length;
-                    const color = (count >= 39 && count <= 42) ? 'text-green-600' : 'text-red-600';
-                    keySection = `
-                        <div class="mt-3">
-                            <div class="flex justify-between items-center mb-1">
-                                <p class="text-xs font-bold text-gray-500 uppercase">Keywords</p>
-                                <span class="text-xs font-bold ${color} bg-gray-100 px-2 py-0.5 rounded">Jml: ${count} (Target: 39-42)</span>
+                    keyHtml = `
+                        <div class="mt-2 text-xs">
+                            <div class="flex justify-between mb-1">
+                                <span class="font-bold text-gray-500">KEYWORDS</span>
+                                <span class="text-green-600 font-bold bg-green-50 px-2 rounded">Total: ${count}</span>
                             </div>
-                            <p class="text-xs text-gray-600 bg-white border border-gray-200 p-2 rounded leading-loose">${item.keywords}</p>
-                        </div>
-                    `;
+                            <p class="bg-gray-50 p-2 rounded border border-gray-200 text-gray-600">${item.keywords}</p>
+                        </div>`;
                 }
 
-                let descSection = '';
                 if (hasDesc && item.description) {
-                    descSection = `
-                        <div class="mt-2 mb-3 bg-gray-50 p-3 rounded border-l-4 border-blue-400">
-                            <p class="text-xs font-bold text-gray-500 uppercase mb-1">Description</p>
-                            <p class="text-sm text-gray-800 text-justify leading-snug">${item.description}</p>
-                        </div>
-                    `;
+                    descHtml = `
+                        <div class="mt-2 mb-2 bg-blue-50 p-2 rounded text-sm text-gray-700 border-l-4 border-blue-400">
+                            ${item.description}
+                        </div>`;
                 }
 
                 return `
-                <div class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-bold text-lg text-blue-800 w-full">${index + 1}. ${item.title}</h3>
-                    </div>
-                    ${descSection}
-                    ${keySection}
-                </div>
-            `}).join('');
+                <div class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition mb-3">
+                    <h3 class="font-bold text-lg text-blue-800">${index + 1}. ${item.title}</h3>
+                    ${descHtml}
+                    ${keyHtml}
+                </div>`;
+            }).join('');
             
             container.scrollTop = container.scrollHeight;
         }
@@ -340,42 +335,25 @@
         function downloadCSV() {
             if (allResults.length === 0) return;
             
-            // --- DYNAMIC HEADER ---
-            // Hanya buat header berdasarkan data yang benar-benar ada
+            // Header Dinamis
             let headers = ["Title"];
-            // Cek item pertama untuk melihat field apa yang tersedia
             if (allResults[0].description !== undefined) headers.push("Description");
             if (allResults[0].keywords !== undefined) headers.push("Keywords");
 
             let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
 
             allResults.forEach(item => {
-                let row = [];
-                // Title selalu ada
-                row.push(`"${(item.title || '').replace(/"/g, '""')}"`);
-                
-                // Masukkan Description hanya jika header Description ada
-                if (headers.includes("Description")) {
-                    row.push(`"${(item.description || '').replace(/"/g, '""')}"`);
-                }
-                
-                // Masukkan Keywords hanya jika header Keywords ada
-                if (headers.includes("Keywords")) {
-                    row.push(`"${(item.keywords || '').replace(/"/g, '""')}"`);
-                }
-                
+                let row = [`"${(item.title || '').replace(/"/g, '""')}"`];
+                if (headers.includes("Description")) row.push(`"${(item.description || '').replace(/"/g, '""')}"`);
+                if (headers.includes("Keywords")) row.push(`"${(item.keywords || '').replace(/"/g, '""')}"`);
                 csvContent += row.join(",") + "\r\n";
             });
 
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            
-            // Nama file dinamis
             const topic = document.getElementById('topic-input').value.replace(/\s+/g,'_');
-            const type = headers.length === 3 ? "FULL" : (headers.includes("Keywords") ? "KEY" : "DESC");
-            
-            link.setAttribute("download", `METADATA_${topic}_${type}.csv`);
+            link.setAttribute("download", `METADATA_${topic}_V6.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
