@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microstock Generator V11 - Real Life Context</title>
+    <title>Microstock Generator V12 - Best Seller Style</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .tab-content { display: none; }
@@ -20,93 +20,102 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+<body class="bg-gray-50 min-h-screen p-4 md:p-8 font-sans">
 
-    <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
-        <div class="bg-blue-900 p-5 text-white">
-            <h1 class="text-2xl font-bold">Microstock Generator (V11 - Real Context)</h1>
-            <p class="text-sm text-blue-200 mt-1">
-                Fitur: <span class="font-bold text-white">Organic Usage Titles</span> • <span class="font-bold text-white">Contextual Descriptions</span> • <span class="font-bold text-white">Excel Fix</span>
+    <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-100">
+        <div class="bg-gradient-to-r from-blue-900 to-indigo-800 p-6 text-white shadow-md">
+            <h1 class="text-2xl font-bold tracking-tight">Microstock Generator (V12 - Organic Best Seller)</h1>
+            <p class="text-sm text-blue-100 mt-2 opacity-90">
+                Fitur: <span class="font-bold text-white border-b border-white/30 pb-0.5">Natural Titles</span> • <span class="font-bold text-white border-b border-white/30 pb-0.5">Flowy Descriptions</span> • <span class="font-bold text-white border-b border-white/30 pb-0.5">Strict Single Keywords (39-42)</span>
             </p>
         </div>
 
         <div class="flex border-b bg-gray-50">
-            <button onclick="openTab('api-tab')" id="btn-api-tab" class="tab-btn active w-1/3 py-4 font-bold text-gray-600 hover:bg-gray-100 transition">1. API CONFIG</button>
-            <button onclick="openTab('input-tab')" id="btn-input-tab" class="tab-btn w-1/3 py-4 font-bold text-gray-600 hover:bg-gray-100 transition">2. COMMAND</button>
-            <button onclick="openTab('output-tab')" id="btn-output-tab" class="tab-btn w-1/3 py-4 font-bold text-gray-600 hover:bg-gray-100 transition">3. RESULTS</button>
+            <button onclick="openTab('api-tab')" id="btn-api-tab" class="tab-btn active w-1/3 py-4 font-bold text-gray-600 hover:bg-gray-100 hover:text-indigo-600 transition tracking-wide text-sm uppercase">1. API Config</button>
+            <button onclick="openTab('input-tab')" id="btn-input-tab" class="tab-btn w-1/3 py-4 font-bold text-gray-600 hover:bg-gray-100 hover:text-indigo-600 transition tracking-wide text-sm uppercase">2. Command</button>
+            <button onclick="openTab('output-tab')" id="btn-output-tab" class="tab-btn w-1/3 py-4 font-bold text-gray-600 hover:bg-gray-100 hover:text-indigo-600 transition tracking-wide text-sm uppercase">3. Results</button>
         </div>
 
-        <div class="p-6">
+        <div class="p-8">
             <div id="api-tab" class="tab-content active">
-                <label class="block text-sm font-bold text-gray-800 mb-2">Groq API Key</label>
-                <input type="password" id="api-key" placeholder="gsk_..." class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 mb-2 shadow-sm">
-                <p class="text-xs text-gray-500">Key disimpan lokal di browser.</p>
-                <button onclick="openTab('input-tab')" class="mt-6 bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition shadow-lg">NEXT STEP</button>
+                <div class="max-w-2xl mx-auto">
+                    <label class="block text-sm font-bold text-gray-800 mb-3">Groq API Key</label>
+                    <div class="relative">
+                        <input type="password" id="api-key" placeholder="gsk_..." class="w-full p-4 pl-5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm bg-gray-50 focus:bg-white">
+                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 19l-4-4-4 4-2-2 4-4 4 4 2-2L21 9a2 2 0 01-2 2 2 2 0 01-2-2z" /></svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2 ml-1">Key is stored locally in your browser.</p>
+                    <button onclick="openTab('input-tab')" class="mt-8 w-full bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg transform active:scale-[0.99]">NEXT STEP</button>
+                </div>
             </div>
 
             <div id="input-tab" class="tab-content">
                 <div class="mb-8">
                     <label class="block text-sm font-bold text-gray-800 mb-2">Main Keyword (Topik Utama)</label>
-                    <input type="text" id="topic-input" placeholder="Contoh: film burn transitions" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg shadow-sm">
-                    <p class="text-xs text-blue-600 mt-2 font-bold">
-                        AI akan memikirkan penggunaan "Real Life" dari topik ini. (Contoh: untuk flashback, untuk intro, dll).
+                    <input type="text" id="topic-input" placeholder="Contoh: light leak" class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 text-lg shadow-sm">
+                    <p class="text-xs text-indigo-600 mt-2 font-medium bg-indigo-50 inline-block px-2 py-1 rounded">
+                        ℹ️ Script akan membuat variasi natural seperti: "Organic light leak...", "Classic light leak in 4k...", dll.
                     </p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-6 mb-8">
                     <div>
-                        <label class="block text-sm font-bold text-gray-800 mb-2">Jumlah Aset (Max 500)</label>
-                        <input type="number" id="total-count" value="10" min="1" max="500" class="w-full p-4 border rounded-lg shadow-sm">
+                        <label class="block text-sm font-bold text-gray-800 mb-2">Jumlah Aset</label>
+                        <input type="number" id="total-count" value="10" min="1" max="500" class="w-full p-4 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500">
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-800 mb-2">Mode Output</label>
-                        <input type="text" value="Flexible (Select Checkbox)" disabled class="w-full p-4 border rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed">
+                        <input type="text" value="Automatic (Checkboxes)" disabled class="w-full p-4 border border-gray-200 rounded-xl bg-gray-100 text-gray-400 cursor-not-allowed">
                     </div>
                 </div>
 
                 <div class="flex gap-6 mb-8">
-                    <label class="flex items-center space-x-3 cursor-pointer bg-white p-4 rounded-lg border border-gray-200 w-full hover:border-blue-500 transition shadow-sm group">
-                        <input type="checkbox" id="gen-desc" checked class="w-5 h-5 text-blue-600 rounded">
+                    <label class="flex items-start space-x-3 cursor-pointer bg-white p-5 rounded-xl border border-gray-200 w-full hover:border-indigo-500 transition shadow-sm hover:shadow-md group">
+                        <input type="checkbox" id="gen-desc" checked class="w-5 h-5 mt-1 text-indigo-600 rounded focus:ring-indigo-500">
                         <div class="flex flex-col">
-                            <span class="font-bold text-gray-700 group-hover:text-blue-700">Generate Descriptions</span>
-                            <span class="text-xs text-gray-400">Min 50 words. Explains "Why & Where".</span>
+                            <span class="font-bold text-gray-800 group-hover:text-indigo-700">Generate Descriptions</span>
+                            <span class="text-xs text-gray-500 mt-1">Flowy & Natural (e.g. "Could be used as..."). Min 50 words.</span>
                         </div>
                     </label>
-                    <label class="flex items-center space-x-3 cursor-pointer bg-white p-4 rounded-lg border border-gray-200 w-full hover:border-blue-500 transition shadow-sm group">
-                        <input type="checkbox" id="gen-key" checked class="w-5 h-5 text-blue-600 rounded">
+                    <label class="flex items-start space-x-3 cursor-pointer bg-white p-5 rounded-xl border border-gray-200 w-full hover:border-indigo-500 transition shadow-sm hover:shadow-md group">
+                        <input type="checkbox" id="gen-key" checked class="w-5 h-5 mt-1 text-indigo-600 rounded focus:ring-indigo-500">
                         <div class="flex flex-col">
-                            <span class="font-bold text-gray-700 group-hover:text-blue-700">Generate Keywords</span>
-                            <span class="text-xs text-gray-400">Strict 39-42 Single Words.</span>
+                            <span class="font-bold text-gray-800 group-hover:text-indigo-700">Generate Keywords</span>
+                            <span class="text-xs text-gray-500 mt-1">Strict Single Words (No phrases). Target 39-42.</span>
                         </div>
                     </label>
                 </div>
 
-                <button onclick="startBatchGeneration()" class="w-full bg-green-600 text-white py-4 rounded-lg font-bold text-xl hover:bg-green-700 shadow-xl transition transform active:scale-[0.99]">
-                    START GENERATING
+                <button onclick="startBatchGeneration()" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-xl hover:bg-green-700 shadow-xl transition transform active:scale-[0.99] flex justify-center items-center">
+                    <span>START GENERATING</span>
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                 </button>
             </div>
 
             <div id="output-tab" class="tab-content">
-                <div id="status-container" class="hidden mb-6 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                <div id="status-container" class="hidden mb-6 bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
                     <div class="flex justify-between text-sm font-bold mb-2 text-gray-700">
-                        <span id="status-text">Processing...</span>
+                        <span id="status-text" class="flex items-center"><span class="animate-pulse mr-2">●</span> Processing...</span>
                         <span id="progress-text">0/0</span>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
-                        <div id="progress-bar" class="bg-blue-600 h-4 rounded-full transition-all duration-500 animate-stripes" style="width: 0%"></div>
+                    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                        <div id="progress-bar" class="bg-indigo-600 h-3 rounded-full transition-all duration-500 animate-stripes" style="width: 0%"></div>
                     </div>
                 </div>
 
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-gray-800">Results <span id="result-count" class="text-sm font-normal text-gray-500">(0 item)</span></h2>
-                    <button onclick="downloadCSV()" id="download-btn" class="hidden bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 flex items-center font-bold shadow-lg transition">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    <h2 class="text-xl font-bold text-gray-800">Results <span id="result-count" class="text-sm font-normal text-gray-500 ml-1">(0 item)</span></h2>
+                    <button onclick="downloadCSV()" id="download-btn" class="hidden bg-black text-white px-6 py-2.5 rounded-lg hover:bg-gray-800 flex items-center font-bold shadow-lg transition transform hover:-translate-y-0.5">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         Download Excel CSV
                     </button>
                 </div>
 
-                <div id="result-area" class="space-y-4 h-[500px] overflow-y-auto pr-2 pb-10">
+                <div id="result-area" class="space-y-4 h-[500px] overflow-y-auto pr-2 pb-10 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                     <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                        <svg class="w-16 h-16 mb-4 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                         <p>Ready to generate. Please enter command.</p>
                     </div>
                 </div>
@@ -118,24 +127,13 @@
         let allResults = [];
         let isProcessing = false;
         
-        // Tema Proyek Nyata (Real World Projects) untuk memicu variasi penggunaan
-        const REAL_WORLD_CONTEXTS = [
-            "Documentary & History (e.g., archival, flashback)",
-            "Music Video & Artsy (e.g., psychedelic, beat drop)",
-            "Wedding & Sentimental (e.g., memories, soft look)",
-            "Sci-Fi & Technology (e.g., glitch, hud, digital)",
-            "Action & Sports (e.g., dynamic, fast cut)",
-            "Horror & Thriller (e.g., scary, distortion)",
-            "Corporate & Clean (e.g., presentation, background)",
-            "YouTube & Social Media (e.g., vlog intro, transition)",
-            "Fashion & Lifestyle (e.g., stylish, glamour)",
-            "News & Broadcast (e.g., overlay, lower third)"
-        ];
-
+        // Backup keywords (Single Words) untuk mengisi kekurangan
         const BACKUP_KEYWORDS = [
             "footage", "video", "clip", "stock", "creative", "digital", "multimedia", 
             "content", "visual", "art", "design", "graphic", "backdrop", "effect",
-            "background", "texture", "abstract", "modern", "production", "element"
+            "background", "texture", "abstract", "modern", "production", "element",
+            "motion", "animation", "style", "concept", "overlay", "template", "hd", 
+            "cinematic", "post", "editing", "sequence", "layer", "render", "media"
         ];
 
         function openTab(tabId) {
@@ -164,7 +162,6 @@
             
             const batchSize = 5; 
             let currentCount = 0;
-            let themeIndex = 0;
 
             updateProgress(0, totalTarget, "Initializing...");
 
@@ -172,14 +169,10 @@
                 const remaining = totalTarget - currentCount;
                 const thisBatchSize = Math.min(batchSize, remaining); 
                 
-                // Rotasi Konteks Nyata
-                const currentContext = REAL_WORLD_CONTEXTS[themeIndex % REAL_WORLD_CONTEXTS.length];
-                themeIndex++;
-
-                updateProgress(currentCount, totalTarget, `Generating batch ${currentCount + 1}-${currentCount + thisBatchSize} (Context: ${currentContext.split(' ')[0]})...`);
+                updateProgress(currentCount, totalTarget, `Generating batch ${currentCount + 1}-${currentCount + thisBatchSize} (Organic Style)...`);
 
                 try {
-                    const batchResult = await fetchFromGroq(apiKey, topic, thisBatchSize, useDesc, useKey, currentContext, currentCount);
+                    const batchResult = await fetchFromGroq(apiKey, topic, thisBatchSize, useDesc, useKey, currentCount);
                     if (batchResult && batchResult.length > 0) {
                         const uniqueBatch = batchResult.filter(newItem => 
                             !allResults.some(existing => existing.title === newItem.title)
@@ -208,40 +201,46 @@
             const percent = Math.min((current / total) * 100, 100);
             document.getElementById('progress-bar').style.width = `${percent}%`;
             document.getElementById('progress-text').innerText = `${current}/${total}`;
-            document.getElementById('status-text').innerText = text;
+            document.getElementById('status-text').innerHTML = `<span class="animate-pulse mr-2">●</span> ${text}`;
             document.getElementById('result-count').innerText = `(${current} items)`;
         }
 
-        async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, context, offset) {
+        async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, offset) {
             
-            let outputFields = [`"title": "${topic} + [Real Life Context]"`];
-            if (useDesc) outputFields.push(`"description": "Explanation 50-150 words..."`);
+            let outputFields = [`"title": "Natural title..."`];
+            if (useDesc) outputFields.push(`"description": "Natural description..."`);
             if (useKey) outputFields.push(`"keywords": "tag1, tag2..."`);
 
             const jsonTemplate = `{ "assets": [ { ${outputFields.join(', ')} } ] }`;
             const mainKeywordsArr = topic.split(/\s+/).join(", ");
             
-            // --- UPDATED SYSTEM PROMPT: REAL LIFE LOGIC ---
-            const systemPrompt = `You are a Professional Video Editor & Metadata Expert.
+            // --- SYSTEM PROMPT (THE ORGANIC STYLE ENGINE) ---
+            const systemPrompt = `You are a Top-Selling Stock Footage Contributor (Shutterstock/Adobe Stock Expert).
             
-            TASK: Generate ${count} items for asset topic: "${topic}".
-            CONTEXT FOR THIS BATCH: ${context}.
+            TASK: Generate ${count} metadata items for asset: "${topic}".
+            GOAL: Create metadata that looks "Organic", "Rich", and "High-Value".
             
-            1. TITLE RULES (RELATABLE & SIMPLE):
-               - STRUCTURE: "${topic}" + [SPECIFIC REAL-WORLD USAGE].
-               - LOGIC: Ask yourself, "Where would an editor use this ${topic}?"
-               - IF "${topic}" is "Film Burn" -> usage is "for nostalgic flashback", "for wedding montage", "for cinematic intro".
-               - IF "${topic}" is "Liquid" -> usage is "for psychedelic background", "for science visual".
-               - STYLE: Simple, functional, and natural (organic).
-               - FORBIDDEN: Do NOT use colors, objects, or models.
+            1. TITLE RULES (NATURAL & DESCRIPTIVE):
+               - DO NOT BE ROBOTIC. Avoid simple "[Topic] for [Function]" patterns.
+               - USE SENSORY & MOOD WORDS: "Organic", "Elegant", "Classic", "Vintage", "Shaking", "Clutter", "Texture", "Grainy", "Bokeh", "Flashing".
+               - STRUCTURE EXAMPLES (Study these!):
+                 * "Organic light leak effect background animation stock footage."
+                 * "Lens light leaks flashing around making an elegant abstract background."
+                 * "Shaking 16mm film clutter with dirt and scratches."
+                 * "Classic Light Leak in 4k with soft warm tones."
+                 * "Abstract liquid background for psychedelic music video."
+               - MUST CONTAIN "${topic}" naturally within the sentence.
+               - VARIETY: Every title must feel unique.
+               
+            ${useDesc ? `2. DESCRIPTION RULES (FLOWY & SALES-ORIENTED):
+               - Style: Natural sentences. Not robotic lists.
+               - Phrases to use: "Could be used as...", "Making an elegant...", "Features a...", "Perfect for...", "High quality overlay...".
+               - Length: Min 50 words, Max 150 words.
+               - Content: Describe texture, motion, and feeling.` : ''}
             
-            ${useDesc ? `2. DESCRIPTION RULES: 
-               - LENGTH: Min 50 words, Max 150 words.
-               - CONTENT: Explain *why* this asset fits the usage mentioned in the title. (e.g. "This film burn creates a warm nostalgic feeling perfect for...")` : ''}
-            
-            ${useKey ? `3. KEYWORD RULES: 
-               - FORMAT: Single words only. No phrases.
-               - QUANTITY: Target 50 (I will trim to 42).` : ''}
+            ${useKey ? `3. KEYWORD RULES (STRICT SINGLE WORDS):
+               - FORMAT: Single words only. Split phrases (e.g. "light leak" -> "light, leak").
+               - QUANTITY: Target 50 words (I will trim to 42).` : ''}
 
             OUTPUT JSON ONLY:
             ${jsonTemplate}`;
@@ -256,9 +255,9 @@
                     model: "llama-3.3-70b-versatile",
                     messages: [
                         { role: "system", content: systemPrompt },
-                        { role: "user", content: `Generate batch based on context: ${context}.` }
+                        { role: "user", content: `Generate batch (Offset ${offset}). Make it sound high-quality and organic.` }
                     ],
-                    temperature: 0.85, // Sedikit lebih kreatif untuk variasi "Usage"
+                    temperature: 0.9, // High creativity for varied sentence structures
                     response_format: { type: "json_object" }
                 })
             });
@@ -274,14 +273,11 @@
                 if (!useDesc) delete item.description;
                 if (!useKey) delete item.keywords;
 
-                // Title Logic
-                if (item.title) {
-                    if (!item.title.toLowerCase().startsWith(topic.toLowerCase())) {
-                        let suffix = item.title.replace(new RegExp(topic, 'gi'), '').trim();
-                        item.title = `${topic} ${suffix}`;
-                    }
-                    item.title = item.title.replace(/\s+/g, ' ').trim();
+                // Title Safety: Ensure main topic exists, but respect natural flow
+                if (item.title && !item.title.toLowerCase().includes(topic.toLowerCase())) {
+                    item.title = `${topic} - ${item.title}`; // Fallback if AI forgets topic
                 }
+                if (item.title) item.title = item.title.replace(/"/g, '').trim();
 
                 // Description Logic
                 if (useDesc && item.description) {
@@ -289,12 +285,14 @@
                     if (words.length > 150) item.description = words.slice(0, 150).join(" ") + ".";
                 }
 
-                // Keyword Logic
+                // Keyword Logic (Single Word Enforcer)
                 if (useKey && item.keywords) {
                     let rawTags = item.keywords.split(',');
                     let singleTags = [];
+                    
+                    // Split sentences/phrases into single words
                     rawTags.forEach(tag => {
-                        let words = tag.trim().split(/\s+/);
+                        let words = tag.trim().split(/[\s\.]+/); // Split by space or dot
                         words.forEach(w => {
                             let cleanW = w.toLowerCase().replace(/[^a-z0-9]/g, '');
                             if (cleanW.length > 1) singleTags.push(cleanW);
@@ -302,10 +300,13 @@
                     });
                     
                     let uniqueTags = [...new Set(singleTags)];
+                    
+                    // Priority Tags (Main Topic Split)
                     const mainWords = topic.toLowerCase().split(/\s+/);
                     uniqueTags = uniqueTags.filter(t => !mainWords.includes(t));
                     uniqueTags = [...mainWords, ...uniqueTags];
 
+                    // Count Check (39-42)
                     if (uniqueTags.length < 39) {
                         let needed = 39 - uniqueTags.length;
                         let extras = BACKUP_KEYWORDS.filter(k => !uniqueTags.includes(k)).slice(0, needed);
@@ -329,28 +330,28 @@
 
                 if (hasKey && item.keywords) {
                     const count = item.keywords.split(',').length;
-                    const countColor = (count >= 39 && count <= 42) ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+                    const countColor = (count >= 39 && count <= 42) ? 'text-green-600 bg-green-50 border-green-200' : 'text-red-600 bg-red-50 border-red-200';
                     keyHtml = `
-                        <div class="mt-4">
+                        <div class="mt-4 pt-4 border-t border-gray-100">
                             <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-gray-500 uppercase">Keywords</span>
-                                <span class="text-xs font-bold ${countColor} px-2 py-1 rounded">Count: ${count}</span>
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Keywords (Single)</span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${countColor}">Count: ${count}</span>
                             </div>
-                            <div class="bg-gray-50 p-3 rounded text-sm text-gray-600 font-mono">${item.keywords}</div>
+                            <div class="text-sm text-gray-500 font-mono leading-relaxed break-words bg-gray-50 p-3 rounded-lg border border-gray-100">${item.keywords}</div>
                         </div>`;
                 }
 
                 if (hasDesc && item.description) {
                     descHtml = `
-                        <div class="mt-3 bg-blue-50 p-4 rounded text-sm text-gray-800 border-l-4 border-blue-500">
-                            ${item.description}
+                        <div class="mt-3 bg-indigo-50/50 p-4 rounded-lg border-l-4 border-indigo-500 text-sm text-gray-700 leading-relaxed italic">
+                            "${item.description}"
                         </div>`;
                 }
 
                 return `
-                <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm mb-4">
-                    <h3 class="font-bold text-lg text-slate-800 flex items-start">
-                        <span class="text-blue-500 mr-3">#${index + 1}</span>
+                <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all duration-300 mb-6 group">
+                    <h3 class="font-bold text-lg text-gray-800 leading-snug flex items-start group-hover:text-indigo-700 transition-colors">
+                        <span class="text-indigo-400 mr-3 text-base mt-1 font-mono">#${index + 1}</span>
                         ${item.title}
                     </h3>
                     ${descHtml}
@@ -361,7 +362,6 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // CSV DOWNLOAD FIXED (EXCEL COMPATIBLE)
         function downloadCSV() {
             if (allResults.length === 0) return;
 
@@ -372,7 +372,7 @@
             if (hasDesc) headers.push("Description");
             if (hasKey) headers.push("Keywords");
 
-            // BOM untuk Excel
+            // BOM for Excel
             let csvContent = "\uFEFF" + headers.join(",") + "\r\n";
 
             allResults.forEach(item => {
@@ -398,7 +398,7 @@
             
             const link = document.createElement("a");
             link.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent));
-            link.setAttribute("download", `METADATA_${topic}_${type}.csv`);
+            link.setAttribute("download", `METADATA_${topic}_${type}_ORGANIC.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
