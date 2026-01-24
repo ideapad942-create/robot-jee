@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microstock Generator Pro - Functional Titles V6</title>
+    <title>Microstock Generator Pro - V7 (English Only)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .tab-content { display: none; }
@@ -23,65 +23,63 @@
 <body class="bg-gray-100 min-h-screen p-4 md:p-8">
 
     <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
-        <div class="bg-blue-900 p-4 text-white">
-            <h1 class="text-xl font-bold">Microstock Metadata Generator (V6 - Functional Titles)</h1>
-            <p class="text-xs text-blue-200">Fitur Baru: Title Lock (Judul = Keyword Utama + Fungsi) & Smart Checkbox CSV.</p>
+        <div class="bg-indigo-900 p-4 text-white">
+            <h1 class="text-xl font-bold">Microstock Generator (V7 - Strict English)</h1>
+            <p class="text-xs text-indigo-200">Force English Language • Unique Titles • Strict Keywords (39-42)</p>
         </div>
 
         <div class="flex border-b bg-gray-50">
             <button onclick="openTab('api-tab')" id="btn-api-tab" class="tab-btn active w-1/3 py-4 font-medium hover:bg-gray-100 transition">1. API Key</button>
-            <button onclick="openTab('input-tab')" id="btn-input-tab" class="tab-btn w-1/3 py-4 font-medium hover:bg-gray-100 transition">2. Input Perintah</button>
-            <button onclick="openTab('output-tab')" id="btn-output-tab" class="tab-btn w-1/3 py-4 font-medium hover:bg-gray-100 transition">3. Hasil</button>
+            <button onclick="openTab('input-tab')" id="btn-input-tab" class="tab-btn w-1/3 py-4 font-medium hover:bg-gray-100 transition">2. Command</button>
+            <button onclick="openTab('output-tab')" id="btn-output-tab" class="tab-btn w-1/3 py-4 font-medium hover:bg-gray-100 transition">3. Results</button>
         </div>
 
         <div class="p-6">
             <div id="api-tab" class="tab-content active">
                 <label class="block text-sm font-bold text-gray-700 mb-2">Groq API Key</label>
                 <input type="password" id="api-key" placeholder="gsk_..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 mb-2">
-                <p class="text-xs text-gray-500">Key disimpan sementara di browser Anda.</p>
-                <button onclick="openTab('input-tab')" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Lanjut</button>
+                <p class="text-xs text-gray-500">Your key is stored locally in your browser session.</p>
+                <button onclick="openTab('input-tab')" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Next Step</button>
             </div>
 
             <div id="input-tab" class="tab-content">
                 <div class="mb-6">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Topik Utama (Main Keyword)</label>
-                    <input type="text" id="topic-input" placeholder="Contoh: film burn transitions" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg">
-                    <p class="text-xs text-blue-600 mt-1 font-semibold">Tips: Masukkan kata dasar saja (misal: "film burn transitions"). Script akan menambahkan fungsi di belakangnya.</p>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Main Keyword (Title Prefix)</label>
+                    <input type="text" id="topic-input" placeholder="e.g. film burn transitions" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg">
+                    <p class="text-xs text-indigo-600 mt-1 font-semibold">The script will lock this phrase at the start of every title.</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Jumlah Total Aset</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Total Assets</label>
                         <input type="number" id="total-count" value="10" min="1" max="500" class="w-full p-3 border rounded-lg">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Bahasa Output</label>
-                        <select id="language" class="w-full p-3 border rounded-lg bg-white">
-                            <option value="English">Inggris (Wajib untuk US Market)</option>
-                        </select>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Language Mode</label>
+                        <input type="text" value="English Only (Strict)" disabled class="w-full p-3 border rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed">
                     </div>
                 </div>
 
                 <div class="flex gap-4 mb-6">
                     <label class="flex items-center space-x-2 cursor-pointer bg-gray-50 p-3 rounded border w-full hover:bg-blue-50 transition border-gray-300">
                         <input type="checkbox" id="gen-desc" class="w-5 h-5 text-blue-600 rounded">
-                        <span>Generate Deskripsi</span>
+                        <span>Generate Descriptions (English)</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer bg-gray-50 p-3 rounded border w-full hover:bg-blue-50 transition border-gray-300">
                         <input type="checkbox" id="gen-key" checked class="w-5 h-5 text-blue-600 rounded">
-                        <span>Generate Keywords (39-42 tags)</span>
+                        <span>Generate Keywords (39-42 Tags)</span>
                     </label>
                 </div>
 
                 <button onclick="startBatchGeneration()" class="w-full bg-green-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-green-700 shadow-lg transition transform active:scale-95">
-                    MULAI GENERATE
+                    START GENERATING
                 </button>
             </div>
 
             <div id="output-tab" class="tab-content">
                 <div id="status-container" class="hidden mb-6">
                     <div class="flex justify-between text-sm font-bold mb-1">
-                        <span id="status-text">Memproses...</span>
+                        <span id="status-text">Processing...</span>
                         <span id="progress-text">0/50</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
@@ -90,7 +88,7 @@
                 </div>
 
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-gray-800">Hasil <span id="result-count" class="text-sm font-normal text-gray-500">(0 item)</span></h2>
+                    <h2 class="text-xl font-bold text-gray-800">Results <span id="result-count" class="text-sm font-normal text-gray-500">(0 item)</span></h2>
                     <button onclick="downloadCSV()" id="download-btn" class="hidden bg-black text-white px-5 py-2 rounded hover:bg-gray-800 flex items-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         Download CSV
@@ -98,7 +96,7 @@
                 </div>
 
                 <div id="result-area" class="space-y-3 h-[500px] overflow-y-auto pr-2">
-                    <div class="text-center text-gray-400 py-10">Belum ada data. Silakan input perintah.</div>
+                    <div class="text-center text-gray-400 py-10">No data yet. Please enter command.</div>
                 </div>
             </div>
         </div>
@@ -108,11 +106,12 @@
         let allResults = [];
         let isProcessing = false;
         
-        // Backup keywords jika AI kurang memberi jumlah tag
+        // Backup keywords (English Only) to ensure we hit min 39 tags
         const BACKUP_KEYWORDS = [
             "footage", "video", "clip", "stock", "creative", "digital", "multimedia", 
             "content", "visual", "art", "design", "graphic", "backdrop", "effect",
-            "background", "texture", "abstract", "modern", "production", "element"
+            "background", "texture", "abstract", "modern", "production", "element",
+            "motion", "animation", "style", "concept", "overlay", "template", "hd", "4k"
         ];
 
         function openTab(tabId) {
@@ -129,9 +128,9 @@
             const useDesc = document.getElementById('gen-desc').checked;
             const useKey = document.getElementById('gen-key').checked;
 
-            if (!apiKey) return alert("API Key wajib diisi!");
-            if (!topic) return alert("Topik/Keyword wajib diisi!");
-            if (!useDesc && !useKey) return alert("Pilih minimal satu output (Deskripsi/Keywords)!");
+            if (!apiKey) return alert("API Key is required!");
+            if (!topic) return alert("Main Keyword is required!");
+            if (!useDesc && !useKey) return alert("Please select at least one output type (Desc or Keywords)!");
 
             allResults = [];
             isProcessing = true;
@@ -143,13 +142,13 @@
             const batchSize = 5; 
             let currentCount = 0;
 
-            updateProgress(0, totalTarget, "Memulai...");
+            updateProgress(0, totalTarget, "Initializing...");
 
             while (currentCount < totalTarget && isProcessing) {
                 const remaining = totalTarget - currentCount;
                 const thisBatchSize = Math.min(batchSize, remaining); 
                 
-                updateProgress(currentCount, totalTarget, `Generating item ${currentCount + 1} - ${currentCount + thisBatchSize}...`);
+                updateProgress(currentCount, totalTarget, `Generating batch ${currentCount + 1} - ${currentCount + thisBatchSize}...`);
 
                 try {
                     const batchResult = await fetchFromGroq(apiKey, topic, thisBatchSize, useDesc, useKey, currentCount);
@@ -159,11 +158,11 @@
                         currentCount += batchResult.length;
                         renderResults(allResults); 
                     } else {
-                        console.warn("Batch kosong, mencoba ulang...");
+                        console.warn("Empty batch received, retrying...");
                     }
                 } catch (error) {
                     console.error(error);
-                    alert("Terjadi error. Cek koneksi/API Key.");
+                    alert("Error communicating with AI. Please check API Key.");
                     isProcessing = false;
                 }
 
@@ -171,7 +170,7 @@
             }
 
             if (isProcessing) {
-                updateProgress(totalTarget, totalTarget, "Selesai!");
+                updateProgress(totalTarget, totalTarget, "Completed!");
                 document.getElementById('progress-bar').classList.remove('animate-stripes');
                 document.getElementById('download-btn').classList.remove('hidden');
                 isProcessing = false;
@@ -183,15 +182,15 @@
             document.getElementById('progress-bar').style.width = `${percent}%`;
             document.getElementById('progress-text').innerText = `${current}/${total}`;
             document.getElementById('status-text').innerText = text;
-            document.getElementById('result-count').innerText = `(${current} item)`;
+            document.getElementById('result-count').innerText = `(${current} items)`;
         }
 
         async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, offset) {
             
-            // --- KONSTRUKSI OUTPUT JSON DINAMIS ---
-            let outputFields = [`"title": "WAJIB: ${topic} + [Fungsi/Keterangan]"`];
-            if (useDesc) outputFields.push(`"description": "Deskripsi teknis..."`);
-            if (useKey) outputFields.push(`"keywords": "keyword1, keyword2..."`);
+            // Build Dynamic JSON Structure
+            let outputFields = [`"title": "${topic} + [UNIQUE Suffix]"`];
+            if (useDesc) outputFields.push(`"description": "Technical description in English..."`);
+            if (useKey) outputFields.push(`"keywords": "tag1, tag2..."`);
 
             const jsonTemplate = `{
               "assets": [
@@ -201,34 +200,36 @@
               ]
             }`;
 
-            // --- PERUBAHAN UTAMA: SYSTEM PROMPT LEBIH KETAT UNTUK TITLE ---
             const mainKeywordsArr = topic.split(/\s+/).join(", ");
             
-            const systemPrompt = `Anda adalah Pakar Metadata Microstock.
-            Tugas: Buat ${count} item metadata untuk topik: "${topic}".
+            // --- STRICT ENGLISH SYSTEM PROMPT ---
+            const systemPrompt = `You are a strict English Microstock Metadata Expert.
             
-            ATURAN UTAMA TITLE (SANGAT PENTING):
-            1. STRUKTUR: Mulai judul DENGAN PERSIS kata "${topic}", lalu ikuti dengan kata penghubung (for, with, in, suitable for, isolated on) dan KEGUNAAN/FUNGSI.
-            2. CONTOH BENAR (Jika topik "film burn"):
-               - "film burn for video editing overlays"
-               - "film burn with vintage light leak effect"
-               - "film burn isolated on black background"
-               - "film burn for cinematic intro transition"
-            3. LARANGAN: JANGAN menaruh kata sifat di DEPAN topik. 
-               - SALAH: "Cinematic film burn" (Jangan lakukan ini!)
-               - SALAH: "Retro film burn" (Jangan lakukan ini!)
-            4. VARIASI: Pastikan akhiran (suffix) berbeda-beda untuk setiap item. Jangan ulangi "for overlays" terus menerus.
+            TASK: Generate ${count} unique metadata items for the main topic: "${topic}".
             
-            ${useDesc ? `ATURAN DESCRIPTION: Jelaskan fungsi teknis. Max 150 kata.` : ''}
+            CRITICAL RULES:
+            1. LANGUAGE: ALL OUTPUT MUST BE IN ENGLISH ONLY. Do NOT use Indonesian or any other language.
             
-            ${useKey ? `ATURAN KEYWORDS: 
-               - Berikan 50-60 kata kunci relevan (nanti akan dipotong otomatis).
-               - Wajib diawali kata: "${mainKeywordsArr}".` : ''}
+            2. TITLE RULES:
+               - MUST START with the exact phrase: "${topic}".
+               - MUST be followed by a UNIQUE suffix describing function/style/context.
+               - Example Pattern: "${topic} for [use case]", "${topic} with [visual style]", "${topic} isolated on [background]".
+               - VARIETY IS KEY. Do not repeat the same suffix (e.g., don't use "for overlays" 10 times).
+            
+            ${useDesc ? `3. DESCRIPTION RULES:
+               - Strict Limit: Max 150 words.
+               - Language: Professional English.
+               - Content: Describe the visual effect, technical usage (e.g., for compositing), and mood.` : ''}
+            
+            ${useKey ? `4. KEYWORD RULES:
+               - Provide roughly 50 relevant English tags (I will trim them later).
+               - FIRST tags must be: "${mainKeywordsArr}".
+               - NO Indonesian tags.` : ''}
 
-            OUTPUT JSON ONLY:
+            OUTPUT FORMAT (JSON ONLY):
             ${jsonTemplate}`;
 
-            const userPrompt = `Generate batch ${count} item (Variasi ke-${offset+1}). Ingat: Title harus dimulai dengan "${topic}".`;
+            const userPrompt = `Generate batch ${count} items (Offset ${offset}). Ensure strict English and unique titles.`;
 
             const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
@@ -242,7 +243,7 @@
                         { role: "system", content: systemPrompt },
                         { role: "user", content: userPrompt }
                     ],
-                    temperature: 0.7, // Kreativitas sedikit tinggi agar suffix bervariasi
+                    temperature: 0.85, // Higher temp = More variety in Titles
                     response_format: { type: "json_object" }
                 })
             });
@@ -256,34 +257,50 @@
 
             // --- JAVASCRIPT POST-PROCESSING ---
             return items.map(item => {
-                // Bersihkan field tak terpakai
+                // 1. Cleanup Unrequested Fields
                 if (!useDesc) delete item.description;
                 if (!useKey) delete item.keywords;
 
-                // FORCE TITLE CHECK (Jaga-jaga AI bandel)
-                // Jika title tidak dimulai dengan topik, kita paksa taruh di depan
-                if (item.title && !item.title.toLowerCase().startsWith(topic.toLowerCase())) {
-                    // Hapus topik jika ada di tengah/belakang agar tidak double
-                    let cleanTitle = item.title.replace(new RegExp(topic, 'gi'), '').trim();
-                    item.title = `${topic} ${cleanTitle}`;
+                // 2. FORCE TITLE PREFIX
+                if (item.title) {
+                    // Normalize case to check prefix
+                    if (!item.title.toLowerCase().startsWith(topic.toLowerCase())) {
+                        // Remove topic if it appears elsewhere to avoid duplication
+                        let suffix = item.title.replace(new RegExp(topic, 'gi'), '').trim();
+                        item.title = `${topic} ${suffix}`;
+                    }
+                    // Fix double spaces
+                    item.title = item.title.replace(/\s+/g, ' ').trim();
                 }
 
-                // KEYWORD SAFETY NET (Min 39, Max 42)
+                // 3. DESCRIPTION TRUNCATION (Max 150 Words)
+                if (useDesc && item.description) {
+                    let words = item.description.split(/\s+/);
+                    if (words.length > 150) {
+                        item.description = words.slice(0, 150).join(" ") + ".";
+                    }
+                }
+
+                // 4. KEYWORD LOGIC (Min 39 - Max 42)
                 if (useKey && item.keywords) {
+                    // Split & Clean
                     let tags = item.keywords.split(',').map(s => s.trim().toLowerCase()).filter(s => s.length > 0);
                     
+                    // Force Main Keywords at Start
                     const mainWords = topic.toLowerCase().split(/\s+/);
                     tags = tags.filter(t => !mainWords.includes(t)); 
                     tags = [...mainWords, ...tags];
 
-                    // Fill jika kurang
+                    // FILL if < 39
                     if (tags.length < 39) {
                         let needed = 39 - tags.length;
-                        let extras = BACKUP_KEYWORDS.filter(k => !tags.includes(k)).slice(0, needed);
+                        // Add from backup (randomized slightly to avoid exact same patterns)
+                        let shuffledBackup = BACKUP_KEYWORDS.sort(() => 0.5 - Math.random());
+                        let extras = shuffledBackup.filter(k => !tags.includes(k)).slice(0, needed);
                         tags = [...tags, ...extras];
                     }
 
-                    // Trim jika lebih
+                    // TRIM if > 42
                     if (tags.length > 42) {
                         tags = tags.slice(0, 42);
                     }
@@ -304,26 +321,29 @@
 
                 if (hasKey && item.keywords) {
                     const count = item.keywords.split(',').length;
+                    const countColor = (count >= 39 && count <= 42) ? 'text-green-600' : 'text-red-600';
                     keyHtml = `
                         <div class="mt-2 text-xs">
                             <div class="flex justify-between mb-1">
-                                <span class="font-bold text-gray-500">KEYWORDS</span>
-                                <span class="text-green-600 font-bold bg-green-50 px-2 rounded">Total: ${count}</span>
+                                <span class="font-bold text-gray-500">KEYWORDS (ENGLISH)</span>
+                                <span class="font-bold ${countColor} bg-gray-100 px-2 rounded">Count: ${count} (Target: 39-42)</span>
                             </div>
-                            <p class="bg-gray-50 p-2 rounded border border-gray-200 text-gray-600">${item.keywords}</p>
+                            <p class="bg-gray-50 p-2 rounded border border-gray-200 text-gray-600 leading-relaxed">${item.keywords}</p>
                         </div>`;
                 }
 
                 if (hasDesc && item.description) {
+                    const wordCount = item.description.split(' ').length;
                     descHtml = `
-                        <div class="mt-2 mb-2 bg-blue-50 p-2 rounded text-sm text-gray-700 border-l-4 border-blue-400">
+                        <div class="mt-2 mb-2 bg-indigo-50 p-3 rounded text-sm text-gray-800 border-l-4 border-indigo-400">
+                            <p class="text-xs font-bold text-gray-500 uppercase mb-1">Description (${wordCount} words)</p>
                             ${item.description}
                         </div>`;
                 }
 
                 return `
                 <div class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition mb-3">
-                    <h3 class="font-bold text-lg text-blue-800">${index + 1}. ${item.title}</h3>
+                    <h3 class="font-bold text-lg text-indigo-900 mb-1">${index + 1}. ${item.title}</h3>
                     ${descHtml}
                     ${keyHtml}
                 </div>`;
@@ -335,7 +355,7 @@
         function downloadCSV() {
             if (allResults.length === 0) return;
             
-            // Header Dinamis
+            // Dynamic Headers
             let headers = ["Title"];
             if (allResults[0].description !== undefined) headers.push("Description");
             if (allResults[0].keywords !== undefined) headers.push("Keywords");
@@ -352,8 +372,11 @@
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
+            
             const topic = document.getElementById('topic-input').value.replace(/\s+/g,'_');
-            link.setAttribute("download", `METADATA_${topic}_V6.csv`);
+            const type = headers.length === 3 ? "FULL" : (headers.includes("Keywords") ? "KEY" : "DESC");
+            
+            link.setAttribute("download", `METADATA_${topic}_${type}_EN.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
