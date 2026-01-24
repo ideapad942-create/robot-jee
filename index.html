@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microstock Generator V13 - Clean & Copy</title>
+    <title>Microstock Generator V14 - Anti-Stuck & Auto Save</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -19,11 +19,10 @@
             background-size: 1rem 1rem;
             animation: progress-stripes 1s linear infinite;
         }
-        /* Toast Notification */
         #toast {
             visibility: hidden;
             min-width: 250px;
-            background-color: #333;
+            background-color: #1f2937;
             color: #fff;
             text-align: center;
             border-radius: 8px;
@@ -36,23 +35,19 @@
             font-size: 14px;
             opacity: 0;
             transition: opacity 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-        }
+        #toast.show { visibility: visible; opacity: 1; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen p-4 md:p-8 font-sans">
 
     <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-        <div class="bg-slate-900 p-6 text-white shadow-md flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold tracking-tight">Microstock V13 (Clean & Copy)</h1>
-                <p class="text-sm text-slate-300 mt-1">
-                    No Colors/Vibrant • No 4K/HD • Copy Buttons • Strict Keywords
-                </p>
-            </div>
+        <div class="bg-slate-900 p-6 text-white shadow-md">
+            <h1 class="text-2xl font-bold tracking-tight">Microstock V14 (Anti-Stuck & Auto Save)</h1>
+            <p class="text-sm text-slate-300 mt-1">
+                Persistent API Key • Auto-Retry System • Clean Mode
+            </p>
         </div>
 
         <div class="flex border-b bg-gray-50">
@@ -63,10 +58,27 @@
 
         <div class="p-8">
             <div id="api-tab" class="tab-content active">
-                <div class="max-w-2xl mx-auto">
-                    <label class="block text-sm font-bold text-gray-800 mb-3">Groq API Key</label>
-                    <input type="password" id="api-key" placeholder="gsk_..." class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition shadow-sm">
-                    <button onclick="openTab('input-tab')" class="mt-6 w-full bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition">NEXT</button>
+                <div class="max-w-2xl mx-auto space-y-6">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-800 mb-2">Groq API Key</label>
+                        <div class="flex gap-2">
+                            <input type="password" id="api-key" placeholder="gsk_..." class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition shadow-sm">
+                            <button onclick="saveApiKey()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition shadow-sm whitespace-nowrap">
+                                <i class="fas fa-save mr-2"></i>Save Key
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">
+                            Belum punya API Key? 
+                            <a href="https://console.groq.com/keys" target="_blank" class="text-blue-600 font-bold hover:underline">Buat Gratis di Sini (console.groq.com)</a>
+                        </p>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-sm text-blue-800">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <strong>Info:</strong> Key akan tersimpan di browser Anda. Anda tidak perlu memasukkannya lagi saat refresh halaman.
+                    </div>
+
+                    <button onclick="openTab('input-tab')" class="w-full bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition shadow-lg">LANJUT KE INPUT</button>
                 </div>
             </div>
 
@@ -75,7 +87,7 @@
                     <label class="block text-sm font-bold text-gray-800 mb-2">Main Keyword (Topik Utama)</label>
                     <input type="text" id="topic-input" placeholder="Contoh: light leak" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg shadow-sm">
                     <p class="text-xs text-blue-600 mt-2 font-medium">
-                        *Script akan menolak kata sifat warna/suasana (Vibrant, Warm) kecuali topik memang mengandung kata "texture".
+                        *Script otomatis menolak kata: Vibrant, Soft, Warm, Cozy (Kecuali topik mengandung "texture").
                     </p>
                 </div>
 
@@ -85,7 +97,7 @@
                         <input type="number" id="total-count" value="10" min="1" max="500" class="w-full p-4 border border-gray-300 rounded-lg shadow-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-800 mb-2">Mode Output</label>
+                        <label class="block text-sm font-bold text-gray-800 mb-2">Mode</label>
                         <input type="text" value="Clean Mode (No 4K/HD)" disabled class="w-full p-4 border border-gray-200 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed">
                     </div>
                 </div>
@@ -95,7 +107,7 @@
                         <input type="checkbox" id="gen-desc" checked class="w-5 h-5 mt-1 text-blue-600 rounded">
                         <div class="flex flex-col">
                             <span class="font-bold text-gray-800">Generate Descriptions</span>
-                            <span class="text-xs text-gray-500">Min 50 words. Clean text (No quotes).</span>
+                            <span class="text-xs text-gray-500">Min 50 words. Clean text.</span>
                         </div>
                     </label>
                     <label class="flex items-start space-x-3 cursor-pointer bg-white p-4 rounded-lg border border-gray-200 w-full hover:border-blue-500 transition shadow-sm group">
@@ -139,13 +151,27 @@
         </div>
     </div>
 
-    <div id="toast">Copied to clipboard!</div>
+    <div id="toast">Notification</div>
 
     <script>
         let allResults = [];
         let isProcessing = false;
         
-        // Backup keywords bersih (tanpa HD/4K)
+        // Load API Key on Start
+        window.onload = function() {
+            const savedKey = localStorage.getItem('groqApiKey');
+            if(savedKey) {
+                document.getElementById('api-key').value = savedKey;
+            }
+        };
+
+        function saveApiKey() {
+            const key = document.getElementById('api-key').value.trim();
+            if(!key) return showToast("API Key kosong!");
+            localStorage.setItem('groqApiKey', key);
+            showToast("API Key Berhasil Disimpan! ✅");
+        }
+
         const BACKUP_KEYWORDS = [
             "footage", "video", "clip", "stock", "creative", "digital", "multimedia", 
             "content", "visual", "art", "design", "graphic", "backdrop", "effect",
@@ -153,8 +179,6 @@
             "motion", "animation", "style", "concept", "overlay", "template", 
             "cinematic", "post", "editing", "sequence", "layer", "render", "media"
         ];
-
-        // Kata terlarang untuk keyword
         const FORBIDDEN_KEYS = ["hd", "4k", "8k", "1080p", "720p", "high", "definition", "resolution", "uhd"];
 
         function openTab(tabId) {
@@ -172,11 +196,7 @@
         }
 
         function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast("Copied to clipboard!");
-            }, (err) => {
-                showToast("Failed to copy");
-            });
+            navigator.clipboard.writeText(text).then(() => showToast("Copied!"), () => showToast("Failed"));
         }
 
         async function startBatchGeneration() {
@@ -186,8 +206,11 @@
             const useDesc = document.getElementById('gen-desc').checked;
             const useKey = document.getElementById('gen-key').checked;
 
-            if (!apiKey) return alert("API Key is required!");
+            if (!apiKey) return alert("API Key is required! Masukkan key di Tab 1.");
             if (!topic) return alert("Main Keyword is required!");
+
+            // Auto Save Key jika user lupa klik save
+            localStorage.setItem('groqApiKey', apiKey);
 
             allResults = [];
             isProcessing = true;
@@ -198,6 +221,7 @@
             
             const batchSize = 5; 
             let currentCount = 0;
+            let failureCount = 0; // Untuk mendeteksi stuck parah
 
             updateProgress(0, totalTarget, "Initializing...");
 
@@ -208,8 +232,11 @@
                 updateProgress(currentCount, totalTarget, `Generating batch ${currentCount + 1}-${currentCount + thisBatchSize}...`);
 
                 try {
-                    const batchResult = await fetchFromGroq(apiKey, topic, thisBatchSize, useDesc, useKey, currentCount);
+                    // FUNGSI RETRY DI SINI
+                    const batchResult = await fetchWithRetry(apiKey, topic, thisBatchSize, useDesc, useKey, currentCount);
+                    
                     if (batchResult && batchResult.length > 0) {
+                        // Filter Duplikat
                         const uniqueBatch = batchResult.filter(newItem => 
                             !allResults.some(existing => existing.title === newItem.title)
                         );
@@ -217,12 +244,22 @@
                         allResults = [...allResults, ...uniqueBatch];
                         currentCount += uniqueBatch.length; 
                         renderResults(allResults); 
+                        failureCount = 0; // Reset fail count jika berhasil
                     }
                 } catch (error) {
-                    console.error(error);
+                    console.error("Batch failed:", error);
+                    failureCount++;
+                    // Jika gagal berturut-turut 3x, hentikan
+                    if (failureCount >= 3) {
+                        alert("Terjadi kesalahan koneksi berulang kali. Proses dihentikan. Cek API Key atau koneksi internet.");
+                        isProcessing = false;
+                        break;
+                    }
+                    showToast(`Batch failed, retrying... (${failureCount})`);
                 }
                 
-                await new Promise(r => setTimeout(r, 1500));
+                // Jeda lebih lama (3 detik) untuk menghindari Rate Limit Groq
+                await new Promise(r => setTimeout(r, 3000));
             }
 
             if (isProcessing) {
@@ -237,8 +274,22 @@
             const percent = Math.min((current / total) * 100, 100);
             document.getElementById('progress-bar').style.width = `${percent}%`;
             document.getElementById('progress-text').innerText = `${current}/${total}`;
-            document.getElementById('status-text').innerHTML = text;
+            document.getElementById('status-text').innerText = text;
             document.getElementById('result-count').innerText = `(${current} items)`;
+        }
+
+        // --- SISTEM ANTI STUCK (RETRY MECHANISM) ---
+        async function fetchWithRetry(apiKey, topic, count, useDesc, useKey, offset, retries = 3) {
+            try {
+                return await fetchFromGroq(apiKey, topic, count, useDesc, useKey, offset);
+            } catch (err) {
+                if (retries > 0) {
+                    console.log(`Retrying... (${retries} attempts left)`);
+                    await new Promise(r => setTimeout(r, 2000)); // Tunggu 2 detik sebelum retry
+                    return fetchWithRetry(apiKey, topic, count, useDesc, useKey, offset, retries - 1);
+                }
+                throw err;
+            }
         }
 
         async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, offset) {
@@ -248,27 +299,19 @@
             if (useKey) outputFields.push(`"keywords": "tag1, tag2..."`);
 
             const jsonTemplate = `{ "assets": [ { ${outputFields.join(', ')} } ] }`;
-            const mainKeywordsArr = topic.split(/\s+/).join(", ");
             
-            // --- SYSTEM PROMPT: CLEAN MODE ---
             const systemPrompt = `You are a Microstock Metadata Expert.
-            
             TASK: Generate ${count} metadata items for: "${topic}".
             
-            1. TITLE RULES (CLEAN & FUNCTIONAL):
+            1. TITLE RULES:
                - STRUCTURE: "${topic}" + [FUNCTION/ACTION/USAGE].
-               - FORBIDDEN WORDS: Do NOT use "Vibrant", "Soft", "Warm", "Cozy", "Red", "Blue", "4k", "HD".
-               - EXCEPTION: If user topic contains "texture", you may use texture words. If not, stick to MOTION/USAGE.
+               - NO "Vibrant", "Soft", "Warm", "Cozy", "Red", "Blue", "4k", "HD".
+               - EXCEPTION: If user topic is "texture", allow texture words.
                - STYLE: Professional, descriptive, plain.
-               - Example: "Light leak transitions for video overlay editing" (Good), "Vibrant soft light leak" (Bad).
 
-            ${useDesc ? `2. DESCRIPTION RULES:
-               - CLEAN TEXT: Do NOT use quotation marks (") inside the text.
-               - CONTENT: Explain usage context. Min 50 words.` : ''}
+            ${useDesc ? `2. DESCRIPTION RULES: No quotation marks inside text. Min 50 words.` : ''}
             
-            ${useKey ? `3. KEYWORD RULES:
-               - FORBIDDEN: "hd", "4k", "8k", "resolution".
-               - FORMAT: Single words only. Target 50 words.` : ''}
+            ${useKey ? `3. KEYWORD RULES: NO "hd", "4k", "8k", "resolution". Single words only.` : ''}
 
             OUTPUT JSON ONLY:
             ${jsonTemplate}`;
@@ -290,6 +333,10 @@
                 })
             });
 
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
+
             const data = await response.json();
             let items = [];
             try {
@@ -301,53 +348,41 @@
                 if (!useDesc) delete item.description;
                 if (!useKey) delete item.keywords;
 
-                // Title Cleanup
                 if (item.title) {
                     item.title = item.title.replace(/"/g, '').trim();
-                    // Force start with topic
                     if (!item.title.toLowerCase().includes(topic.toLowerCase())) {
                         item.title = `${topic} for video editing ${item.title}`;
                     }
                 }
 
-                // Description Cleanup (No Quotes)
                 if (useDesc && item.description) {
                     item.description = item.description.replace(/"/g, '').replace(/'/g, '').trim();
                     let words = item.description.split(/\s+/);
                     if (words.length > 150) item.description = words.slice(0, 150).join(" ") + ".";
                 }
 
-                // Keyword Cleanup (No HD/4K)
                 if (useKey && item.keywords) {
                     let rawTags = item.keywords.split(',');
                     let singleTags = [];
-                    
                     rawTags.forEach(tag => {
                         let words = tag.trim().split(/[\s\.]+/); 
                         words.forEach(w => {
                             let cleanW = w.toLowerCase().replace(/[^a-z0-9]/g, '');
-                            // Filter Forbidden Keys
-                            if (cleanW.length > 1 && !FORBIDDEN_KEYS.includes(cleanW)) {
-                                singleTags.push(cleanW);
-                            }
+                            if (cleanW.length > 1 && !FORBIDDEN_KEYS.includes(cleanW)) singleTags.push(cleanW);
                         });
                     });
                     
                     let uniqueTags = [...new Set(singleTags)];
-                    
-                    // Priority Tags
                     const mainWords = topic.toLowerCase().split(/\s+/);
                     uniqueTags = uniqueTags.filter(t => !mainWords.includes(t));
                     uniqueTags = [...mainWords, ...uniqueTags];
 
-                    // Count Check (39-42)
                     if (uniqueTags.length < 39) {
                         let needed = 39 - uniqueTags.length;
                         let extras = BACKUP_KEYWORDS.filter(k => !uniqueTags.includes(k)).slice(0, needed);
                         uniqueTags = [...uniqueTags, ...extras];
                     }
                     if (uniqueTags.length > 42) uniqueTags = uniqueTags.slice(0, 42);
-                    
                     item.keywords = uniqueTags.join(', ');
                 }
                 return item;
@@ -360,7 +395,6 @@
             const hasKey = items.length > 0 && items[0].keywords !== undefined;
 
             container.innerHTML = items.map((item, index) => {
-                // Escape string for onclick handler
                 const safeTitle = (item.title || '').replace(/'/g, "\\'");
                 const safeDesc = (item.description || '').replace(/'/g, "\\'");
                 const safeKey = (item.keywords || '').replace(/'/g, "\\'");
@@ -371,14 +405,12 @@
                     const count = item.keywords.split(',').length;
                     const countColor = (count >= 39 && count <= 42) ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
                     keyHtml = `
-                        <div class="mt-4 pt-4 border-t border-gray-100 relative group/key">
+                        <div class="mt-4 pt-4 border-t border-gray-100 relative">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-[10px] font-bold text-gray-400 uppercase">Keywords</span>
                                 <div class="flex items-center gap-2">
                                     <span class="text-[10px] font-bold px-2 py-0.5 rounded ${countColor}">Count: ${count}</span>
-                                    <button onclick="copyToClipboard('${safeKey}')" class="text-xs bg-gray-100 hover:bg-blue-100 text-gray-600 hover:text-blue-600 px-2 py-1 rounded transition" title="Copy Keywords">
-                                        <i class="fas fa-copy"></i>
-                                    </button>
+                                    <button onclick="copyToClipboard('${safeKey}')" class="text-xs bg-gray-100 hover:bg-blue-100 text-gray-600 hover:text-blue-600 px-2 py-1 rounded transition" title="Copy Keywords"><i class="fas fa-copy"></i></button>
                                 </div>
                             </div>
                             <div class="text-sm text-gray-600 font-mono leading-relaxed bg-gray-50 p-3 rounded-lg">${item.keywords}</div>
@@ -389,69 +421,54 @@
                     descHtml = `
                         <div class="mt-3 relative group/desc">
                             <div class="flex justify-end mb-1 absolute top-2 right-2 opacity-0 group-hover/desc:opacity-100 transition">
-                                <button onclick="copyToClipboard('${safeDesc}')" class="text-xs bg-white shadow-sm border hover:bg-blue-50 text-gray-600 px-2 py-1 rounded transition" title="Copy Description">
-                                    <i class="fas fa-copy"></i>
-                                </button>
+                                <button onclick="copyToClipboard('${safeDesc}')" class="text-xs bg-white shadow-sm border hover:bg-blue-50 text-gray-600 px-2 py-1 rounded transition"><i class="fas fa-copy"></i></button>
                             </div>
-                            <div class="bg-blue-50/40 p-4 rounded-lg border border-blue-100 text-sm text-gray-700 leading-relaxed">
-                                ${item.description}
-                            </div>
+                            <div class="bg-blue-50/40 p-4 rounded-lg border border-blue-100 text-sm text-gray-700 leading-relaxed">${item.description}</div>
                         </div>`;
                 }
 
                 return `
-                <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 relative group/card">
+                <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 relative">
                     <div class="flex justify-between items-start mb-1">
                         <div class="flex items-center gap-2 w-full pr-10">
                             <span class="text-blue-500 font-mono text-sm">#${index + 1}</span>
                             <h3 class="font-bold text-lg text-gray-800 leading-snug">${item.title}</h3>
                         </div>
-                        <button onclick="copyToClipboard('${safeTitle}')" class="absolute top-6 right-6 text-gray-400 hover:text-blue-600 bg-gray-50 hover:bg-blue-50 p-2 rounded-lg transition" title="Copy Title">
-                            <i class="fas fa-copy"></i>
-                        </button>
+                        <button onclick="copyToClipboard('${safeTitle}')" class="absolute top-6 right-6 text-gray-400 hover:text-blue-600 bg-gray-50 hover:bg-blue-50 p-2 rounded-lg transition"><i class="fas fa-copy"></i></button>
                     </div>
                     ${descHtml}
                     ${keyHtml}
                 </div>`;
             }).join('');
-            
             container.scrollTop = container.scrollHeight;
         }
 
         function downloadCSV() {
             if (allResults.length === 0) return;
-
             const hasDesc = document.getElementById('gen-desc').checked;
             const hasKey = document.getElementById('gen-key').checked;
-
             let headers = ["Title"];
             if (hasDesc) headers.push("Description");
             if (hasKey) headers.push("Keywords");
 
-            // BOM for Excel
             let csvContent = "\uFEFF" + headers.join(",") + "\r\n";
-
             allResults.forEach(item => {
                 let row = [];
                 let cleanTitle = (item.title || '').replace(/"/g, '""');
                 row.push(`"${cleanTitle}"`);
-
                 if (hasDesc) {
                     let cleanDesc = (item.description || '').replace(/"/g, '""');
                     row.push(`"${cleanDesc}"`);
                 }
-
                 if (hasKey) {
                     let cleanKey = (item.keywords || '').replace(/"/g, '""');
                     row.push(`"${cleanKey}"`);
                 }
-
                 csvContent += row.join(",") + "\r\n";
             });
 
             const topic = document.getElementById('topic-input').value.replace(/\s+/g,'_');
             const type = (hasDesc && hasKey) ? "FULL" : (hasDesc ? "DESC" : (hasKey ? "KEY" : "TITLE_ONLY"));
-            
             const link = document.createElement("a");
             link.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent));
             link.setAttribute("download", `METADATA_CLEAN_${topic}_${type}.csv`);
