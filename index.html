@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microstock Generator V9 - Ultimate Unique</title>
+    <title>Microstock Generator V10 - Perfect Excel Export</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .tab-content { display: none; }
@@ -24,9 +24,9 @@
 
     <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
         <div class="bg-indigo-900 p-5 text-white">
-            <h1 class="text-2xl font-bold">Microstock Generator (V9 - Ultimate Unique)</h1>
+            <h1 class="text-2xl font-bold">Microstock Generator (V10 - Final)</h1>
             <p class="text-sm text-indigo-200 mt-1">
-                Fitur: <span class="font-bold text-white">Single Word Keywords</span> (No Phrases) • <span class="font-bold text-white">Smart Topic Rotation</span> (Anti-Duplicate Titles) • <span class="font-bold text-white">Strict Count 39-42</span>
+                Fitur: <span class="font-bold text-white">Excel Auto-Column Fix</span> • <span class="font-bold text-white">Title Only Mode</span> • <span class="font-bold text-white">Unique Functions</span>
             </p>
         </div>
 
@@ -40,7 +40,7 @@
             <div id="api-tab" class="tab-content active">
                 <label class="block text-sm font-bold text-gray-800 mb-2">Groq API Key</label>
                 <input type="password" id="api-key" placeholder="gsk_..." class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 mb-2 shadow-sm">
-                <p class="text-xs text-gray-500">Key disimpan sementara di browser Anda (Local Session).</p>
+                <p class="text-xs text-gray-500">Key disimpan lokal di browser.</p>
                 <button onclick="openTab('input-tab')" class="mt-6 bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 transition shadow-lg">NEXT STEP</button>
             </div>
 
@@ -49,7 +49,7 @@
                     <label class="block text-sm font-bold text-gray-800 mb-2">Main Keyword (Topik Utama)</label>
                     <input type="text" id="topic-input" placeholder="Contoh: film burn transitions" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-lg shadow-sm">
                     <p class="text-xs text-indigo-600 mt-2 font-bold">
-                        <span class="bg-indigo-100 px-2 py-1 rounded">INFO:</span> Judul akan otomatis menjadi: "[Topik Utama] + [Fungsi Unik]". Tidak akan ada penyebutan warna/objek.
+                        Akan menjadi: "[Topik] + [Fungsi Unik]". Tidak menyebut warna/objek.
                     </p>
                 </div>
 
@@ -59,24 +59,24 @@
                         <input type="number" id="total-count" value="10" min="1" max="500" class="w-full p-4 border rounded-lg shadow-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-800 mb-2">Mode Bahasa</label>
-                        <input type="text" value="English Only (Strict)" disabled class="w-full p-4 border rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed">
+                        <label class="block text-sm font-bold text-gray-800 mb-2">Mode Output</label>
+                        <input type="text" value="Flexible (Title Only Supported)" disabled class="w-full p-4 border rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed">
                     </div>
                 </div>
 
                 <div class="flex gap-6 mb-8">
                     <label class="flex items-center space-x-3 cursor-pointer bg-white p-4 rounded-lg border border-gray-200 w-full hover:border-indigo-500 transition shadow-sm group">
-                        <input type="checkbox" id="gen-desc" class="w-5 h-5 text-indigo-600 rounded">
+                        <input type="checkbox" id="gen-desc" checked class="w-5 h-5 text-indigo-600 rounded">
                         <div class="flex flex-col">
                             <span class="font-bold text-gray-700 group-hover:text-indigo-700">Generate Descriptions</span>
-                            <span class="text-xs text-gray-400">Min 50, Max 150 words. Detail & Technical.</span>
+                            <span class="text-xs text-gray-400">Min 50 words. Uncheck for Title Only.</span>
                         </div>
                     </label>
                     <label class="flex items-center space-x-3 cursor-pointer bg-white p-4 rounded-lg border border-gray-200 w-full hover:border-indigo-500 transition shadow-sm group">
                         <input type="checkbox" id="gen-key" checked class="w-5 h-5 text-indigo-600 rounded">
                         <div class="flex flex-col">
                             <span class="font-bold text-gray-700 group-hover:text-indigo-700">Generate Keywords</span>
-                            <span class="text-xs text-gray-400">Strict 39-42 Single Words (No phrases).</span>
+                            <span class="text-xs text-gray-400">Strict 39-42 Single Words. Uncheck for Title Only.</span>
                         </div>
                     </label>
                 </div>
@@ -101,13 +101,12 @@
                     <h2 class="text-xl font-bold text-gray-800">Results <span id="result-count" class="text-sm font-normal text-gray-500">(0 item)</span></h2>
                     <button onclick="downloadCSV()" id="download-btn" class="hidden bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 flex items-center font-bold shadow-lg transition">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Download CSV
+                        Download Excel CSV
                     </button>
                 </div>
 
                 <div id="result-area" class="space-y-4 h-[500px] overflow-y-auto pr-2 pb-10">
                     <div class="flex flex-col items-center justify-center h-full text-gray-400">
-                        <svg class="w-16 h-16 mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                         <p>Ready to generate. Please enter command.</p>
                     </div>
                 </div>
@@ -119,28 +118,17 @@
         let allResults = [];
         let isProcessing = false;
         
-        // --- ROTATION THEMES (RAHASIA UNIK 500 JUDUL) ---
-        // Script akan mengirim tema berbeda untuk setiap batch agar judul tidak pernah sama.
+        // Rotasi Tema agar Title selalu unik
         const ROTATION_THEMES = [
-            "Video Editing Workflows (e.g. for timeline, for cuts)",
-            "Compositing & VFX (e.g. for overlays, for blending, alpha channel)",
-            "Broadcasting & TV (e.g. for news intro, for transition)",
-            "Social Media & Content Creation (e.g. for reels, for stories)",
-            "Filmmaking & Cinema (e.g. for cinematic look, for trailer)",
-            "Motion Graphics (e.g. for background, for kinetic type)",
-            "Documentary & Journalism (e.g. for archival footage look)",
-            "Music Video Production (e.g. for beat sync, for dynamic cut)",
-            "Corporate Presentation (e.g. for slideshow, for opener)",
-            "Abstract & Experimental Art (e.g. for texture, for glitch)"
+            "Video Editing Workflows", "Compositing & VFX", "Broadcasting & TV",
+            "Social Media Content", "Filmmaking & Cinema", "Motion Graphics",
+            "Documentary Style", "Music Video Effects", "Corporate Video", "Abstract Art"
         ];
 
-        // Backup Keywords (Single Words Only)
         const BACKUP_KEYWORDS = [
             "footage", "video", "clip", "stock", "creative", "digital", "multimedia", 
             "content", "visual", "art", "design", "graphic", "backdrop", "effect",
-            "background", "texture", "abstract", "modern", "production", "element",
-            "motion", "animation", "style", "concept", "overlay", "template", "hd", 
-            "cinematic", "post", "editing", "sequence", "layer", "render", "media"
+            "background", "texture", "abstract", "modern", "production", "element"
         ];
 
         function openTab(tabId) {
@@ -159,7 +147,7 @@
 
             if (!apiKey) return alert("API Key is required!");
             if (!topic) return alert("Main Keyword is required!");
-            if (!useDesc && !useKey) return alert("Please select Output Type!");
+            // KITA MENGIZINKAN JIKA DESC & KEY UNCHECKED (Title Only Mode)
 
             allResults = [];
             isProcessing = true;
@@ -172,40 +160,38 @@
             let currentCount = 0;
             let themeIndex = 0;
 
-            updateProgress(0, totalTarget, "Initializing Generator...");
+            updateProgress(0, totalTarget, "Initializing...");
 
             while (currentCount < totalTarget && isProcessing) {
                 const remaining = totalTarget - currentCount;
                 const thisBatchSize = Math.min(batchSize, remaining); 
                 
-                // Rotasi Tema
                 const currentTheme = ROTATION_THEMES[themeIndex % ROTATION_THEMES.length];
                 themeIndex++;
 
-                updateProgress(currentCount, totalTarget, `Processing batch ${currentCount + 1}-${currentCount + thisBatchSize} (Theme: ${currentTheme.split(' ')[0]})...`);
+                updateProgress(currentCount, totalTarget, `Processing batch ${currentCount + 1}-${currentCount + thisBatchSize}...`);
 
                 try {
                     const batchResult = await fetchFromGroq(apiKey, topic, thisBatchSize, useDesc, useKey, currentTheme, currentCount);
                     if (batchResult && batchResult.length > 0) {
-                        // Filter Duplikat (Client Side Check)
+                        // Filter Duplikat
                         const uniqueBatch = batchResult.filter(newItem => 
                             !allResults.some(existing => existing.title === newItem.title)
                         );
                         
                         allResults = [...allResults, ...uniqueBatch];
-                        currentCount += uniqueBatch.length; // Hanya tambah yang unik
+                        currentCount += uniqueBatch.length; 
                         renderResults(allResults); 
                     }
                 } catch (error) {
                     console.error(error);
                 }
                 
-                // Delay sedikit biar aman
                 await new Promise(r => setTimeout(r, 1500));
             }
 
             if (isProcessing) {
-                updateProgress(totalTarget, totalTarget, "Generation Complete!");
+                updateProgress(totalTarget, totalTarget, "Done!");
                 document.getElementById('progress-bar').classList.remove('animate-stripes');
                 document.getElementById('download-btn').classList.remove('hidden');
                 isProcessing = false;
@@ -222,33 +208,25 @@
 
         async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, theme, offset) {
             
+            // KONSTRUKSI OUTPUT DINAMIS (PENTING UNTUK CSV)
             let outputFields = [`"title": "${topic} + [Function]"`];
-            if (useDesc) outputFields.push(`"description": "Explanation 50-150 words..."`);
+            if (useDesc) outputFields.push(`"description": "Text..."`);
             if (useKey) outputFields.push(`"keywords": "tag1, tag2..."`);
 
             const jsonTemplate = `{ "assets": [ { ${outputFields.join(', ')} } ] }`;
-
             const mainKeywordsArr = topic.split(/\s+/).join(", ");
             
-            // --- SYSTEM PROMPT (THE BRAIN) ---
-            const systemPrompt = `You are a Strict Metadata Engine.
+            const systemPrompt = `You are a Metadata Engine.
+            TASK: Generate ${count} items for topic: "${topic}". Theme: ${theme}.
             
-            TASK: Generate ${count} items for topic: "${topic}".
-            FOCUS THEME FOR THIS BATCH: ${theme}. (Ensure all titles relate to this theme).
-
-            1. TITLE RULES (STRICT UNIQUE FUNCTION):
+            1. TITLE RULES (STRICT):
                - STRUCTURE: "${topic}" + [FUNCTION SUFFIX].
-               - FORBIDDEN: Do NOT mention colors, objects, models, or numbers.
-               - ALLOWED: Only technical usage (e.g., "for overlay", "for composition", "for premiere pro", "for broadcast").
-               - UNQIUENESS: Titles MUST be different from previous output.
+               - NO Colors, NO Objects, NO Models. Only Usage.
+               - MUST BE UNIQUE.
 
-            ${useDesc ? `2. DESCRIPTION RULES:
-               - LENGTH: 50 to 150 words.
-               - CONTENT: Explain exactly how the asset functions in the theme "${theme}".` : ''}
+            ${useDesc ? `2. DESCRIPTION RULES: Min 50, Max 150 words. Technical explanation.` : ''}
             
-            ${useKey ? `3. KEYWORD RULES (SINGLE WORDS ONLY):
-               - FORMAT: Single words separated by commas. NO PHRASES (e.g., "light leak" -> "light, leak").
-               - QUANTITY: Aim for 50 words (I will trim them).` : ''}
+            ${useKey ? `3. KEYWORD RULES: Single words only. No phrases. ~50 tags.` : ''}
 
             OUTPUT JSON ONLY:
             ${jsonTemplate}`;
@@ -263,9 +241,9 @@
                     model: "llama-3.3-70b-versatile",
                     messages: [
                         { role: "system", content: systemPrompt },
-                        { role: "user", content: `Generate batch. Theme: ${theme}.` }
+                        { role: "user", content: `Generate batch.` }
                     ],
-                    temperature: 0.8, // Kreativitas tinggi untuk variasi fungsi
+                    temperature: 0.8,
                     response_format: { type: "json_object" }
                 })
             });
@@ -277,12 +255,13 @@
                 items = content.assets || content.items || [];
             } catch (e) { return []; }
 
-            // --- JAVASCRIPT POST-PROCESSING (THE CLEANER) ---
+            // VALIDASI JAVASCRIPT
             return items.map(item => {
+                // Hapus field yang tidak dicentang agar tidak masuk ke variable
                 if (!useDesc) delete item.description;
                 if (!useKey) delete item.keywords;
 
-                // 1. Force Title Prefix
+                // Title Logic
                 if (item.title) {
                     if (!item.title.toLowerCase().startsWith(topic.toLowerCase())) {
                         let suffix = item.title.replace(new RegExp(topic, 'gi'), '').trim();
@@ -291,48 +270,36 @@
                     item.title = item.title.replace(/\s+/g, ' ').trim();
                 }
 
-                // 2. Description Logic (Min 50 - Max 150 words)
+                // Description Logic
                 if (useDesc && item.description) {
                     let words = item.description.split(/\s+/);
                     if (words.length > 150) item.description = words.slice(0, 150).join(" ") + ".";
                 }
 
-                // 3. KEYWORD LOGIC (SINGLE WORD ENFORCER & COUNT)
+                // Keyword Logic
                 if (useKey && item.keywords) {
-                    // Tahap 1: Split koma
                     let rawTags = item.keywords.split(',');
-                    
-                    // Tahap 2: Split SPASI (Memecah 2 kata jadi 1 kata)
                     let singleTags = [];
                     rawTags.forEach(tag => {
-                        let words = tag.trim().split(/\s+/); // Split by space
+                        let words = tag.trim().split(/\s+/);
                         words.forEach(w => {
-                            let cleanW = w.toLowerCase().replace(/[^a-z0-9]/g, ''); // Hapus simbol aneh
+                            let cleanW = w.toLowerCase().replace(/[^a-z0-9]/g, '');
                             if (cleanW.length > 1) singleTags.push(cleanW);
                         });
                     });
-
-                    // Tahap 3: Hapus Duplikat
+                    
                     let uniqueTags = [...new Set(singleTags)];
-
-                    // Tahap 4: Prioritas Main Keyword di Depan
                     const mainWords = topic.toLowerCase().split(/\s+/);
                     uniqueTags = uniqueTags.filter(t => !mainWords.includes(t));
                     uniqueTags = [...mainWords, ...uniqueTags];
 
-                    // Tahap 5: Fill (Min 39)
                     if (uniqueTags.length < 39) {
                         let needed = 39 - uniqueTags.length;
-                        let shuffledBackup = BACKUP_KEYWORDS.sort(() => 0.5 - Math.random());
-                        let extras = shuffledBackup.filter(k => !uniqueTags.includes(k)).slice(0, needed);
+                        let extras = BACKUP_KEYWORDS.filter(k => !uniqueTags.includes(k)).slice(0, needed);
                         uniqueTags = [...uniqueTags, ...extras];
                     }
-
-                    // Tahap 6: Trim (Max 42)
-                    if (uniqueTags.length > 42) {
-                        uniqueTags = uniqueTags.slice(0, 42);
-                    }
-
+                    if (uniqueTags.length > 42) uniqueTags = uniqueTags.slice(0, 42);
+                    
                     item.keywords = uniqueTags.join(', ');
                 }
                 return item;
@@ -341,8 +308,10 @@
 
         function renderResults(items) {
             const container = document.getElementById('result-area');
-            const hasDesc = items[0] && items[0].description !== undefined;
-            const hasKey = items[0] && items[0].keywords !== undefined;
+            
+            // Cek apakah data desc/key ada di item pertama
+            const hasDesc = items.length > 0 && items[0].description !== undefined;
+            const hasKey = items.length > 0 && items[0].keywords !== undefined;
 
             container.innerHTML = items.map((item, index) => {
                 let keyHtml = '', descHtml = '';
@@ -353,29 +322,24 @@
                     keyHtml = `
                         <div class="mt-4">
                             <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Keywords (Single Words)</span>
-                                <span class="text-xs font-bold ${countColor} px-2 py-1 rounded border border-current opacity-80">Count: ${count}</span>
+                                <span class="text-xs font-bold text-gray-500 uppercase">Keywords</span>
+                                <span class="text-xs font-bold ${countColor} px-2 py-1 rounded">Count: ${count}</span>
                             </div>
-                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm text-gray-600 leading-7 break-words font-mono">
-                                ${item.keywords}
-                            </div>
+                            <div class="bg-gray-50 p-3 rounded text-sm text-gray-600 font-mono">${item.keywords}</div>
                         </div>`;
                 }
 
                 if (hasDesc && item.description) {
-                    const wordCount = item.description.split(' ').length;
                     descHtml = `
-                        <div class="mt-3 bg-indigo-50 p-4 rounded-lg border-l-4 border-indigo-500 text-sm text-gray-800 leading-relaxed shadow-sm">
-                            <div class="text-xs font-bold text-indigo-400 mb-1 uppercase">Description (${wordCount} Words)</div>
+                        <div class="mt-3 bg-indigo-50 p-4 rounded text-sm text-gray-800 border-l-4 border-indigo-500">
                             ${item.description}
                         </div>`;
                 }
 
                 return `
-                <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 mb-4 group relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <h3 class="font-bold text-lg text-slate-800 mb-1 flex items-start">
-                        <span class="text-indigo-500 mr-3 text-base mt-1">#${index + 1}</span>
+                <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm mb-4">
+                    <h3 class="font-bold text-lg text-slate-800 flex items-start">
+                        <span class="text-indigo-500 mr-3">#${index + 1}</span>
                         ${item.title}
                     </h3>
                     ${descHtml}
@@ -386,28 +350,55 @@
             container.scrollTop = container.scrollHeight;
         }
 
+        // --- FUNGSI DOWNLOAD CSV YANG DIPERBAIKI (EXCEL FIX) ---
         function downloadCSV() {
             if (allResults.length === 0) return;
-            
+
+            // 1. Tentukan Header Dinamis (Cek apa yg dipilih user)
+            const hasDesc = document.getElementById('gen-desc').checked;
+            const hasKey = document.getElementById('gen-key').checked;
+
             let headers = ["Title"];
-            if (allResults[0].description !== undefined) headers.push("Description");
-            if (allResults[0].keywords !== undefined) headers.push("Keywords");
+            if (hasDesc) headers.push("Description");
+            if (hasKey) headers.push("Keywords");
 
-            let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\r\n";
+            // 2. Buat Konten CSV dengan BOM (Byte Order Mark) untuk Excel
+            // \uFEFF memaksa Excel membaca file sebagai UTF-8, sehingga kolom tidak berantakan
+            let csvContent = "\uFEFF" + headers.join(",") + "\r\n";
 
+            // 3. Loop Data
             allResults.forEach(item => {
-                let row = [`"${(item.title || '').replace(/"/g, '""')}"`];
-                if (headers.includes("Description")) row.push(`"${(item.description || '').replace(/"/g, '""')}"`);
-                if (headers.includes("Keywords")) row.push(`"${(item.keywords || '').replace(/"/g, '""')}"`);
+                let row = [];
+                
+                // Title (Selalu ada)
+                let cleanTitle = (item.title || '').replace(/"/g, '""'); // Escape double quotes
+                row.push(`"${cleanTitle}"`);
+
+                // Desc (Jika dipilih)
+                if (hasDesc) {
+                    let cleanDesc = (item.description || '').replace(/"/g, '""');
+                    row.push(`"${cleanDesc}"`);
+                }
+
+                // Key (Jika dipilih)
+                if (hasKey) {
+                    let cleanKey = (item.keywords || '').replace(/"/g, '""');
+                    row.push(`"${cleanKey}"`);
+                }
+
                 csvContent += row.join(",") + "\r\n";
             });
 
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
+            // 4. Download Trigger
+            const encodedUri = encodeURI("data:text/csv;charset=utf-8," + encodeURIComponent(csvContent));
+            
+            // Nama File Dinamis
             const topic = document.getElementById('topic-input').value.replace(/\s+/g,'_');
-            const type = headers.length === 3 ? "FULL" : (headers.includes("Keywords") ? "KEY" : "DESC");
-            link.setAttribute("download", `METADATA_${topic}_${type}_V9.csv`);
+            const type = (hasDesc && hasKey) ? "FULL" : (hasDesc ? "DESC" : (hasKey ? "KEY" : "TITLE_ONLY"));
+            
+            const link = document.createElement("a");
+            link.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent));
+            link.setAttribute("download", `METADATA_${topic}_${type}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
