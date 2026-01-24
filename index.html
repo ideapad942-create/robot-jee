@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microstock Generator V10 - Perfect Excel Export</title>
+    <title>Microstock Generator V11 - Real Life Context</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .tab-content { display: none; }
@@ -23,10 +23,10 @@
 <body class="bg-gray-100 min-h-screen p-4 md:p-8">
 
     <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
-        <div class="bg-indigo-900 p-5 text-white">
-            <h1 class="text-2xl font-bold">Microstock Generator (V10 - Final)</h1>
-            <p class="text-sm text-indigo-200 mt-1">
-                Fitur: <span class="font-bold text-white">Excel Auto-Column Fix</span> • <span class="font-bold text-white">Title Only Mode</span> • <span class="font-bold text-white">Unique Functions</span>
+        <div class="bg-blue-900 p-5 text-white">
+            <h1 class="text-2xl font-bold">Microstock Generator (V11 - Real Context)</h1>
+            <p class="text-sm text-blue-200 mt-1">
+                Fitur: <span class="font-bold text-white">Organic Usage Titles</span> • <span class="font-bold text-white">Contextual Descriptions</span> • <span class="font-bold text-white">Excel Fix</span>
             </p>
         </div>
 
@@ -39,17 +39,17 @@
         <div class="p-6">
             <div id="api-tab" class="tab-content active">
                 <label class="block text-sm font-bold text-gray-800 mb-2">Groq API Key</label>
-                <input type="password" id="api-key" placeholder="gsk_..." class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 mb-2 shadow-sm">
+                <input type="password" id="api-key" placeholder="gsk_..." class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 mb-2 shadow-sm">
                 <p class="text-xs text-gray-500">Key disimpan lokal di browser.</p>
-                <button onclick="openTab('input-tab')" class="mt-6 bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 transition shadow-lg">NEXT STEP</button>
+                <button onclick="openTab('input-tab')" class="mt-6 bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition shadow-lg">NEXT STEP</button>
             </div>
 
             <div id="input-tab" class="tab-content">
                 <div class="mb-8">
                     <label class="block text-sm font-bold text-gray-800 mb-2">Main Keyword (Topik Utama)</label>
-                    <input type="text" id="topic-input" placeholder="Contoh: film burn transitions" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-lg shadow-sm">
-                    <p class="text-xs text-indigo-600 mt-2 font-bold">
-                        Akan menjadi: "[Topik] + [Fungsi Unik]". Tidak menyebut warna/objek.
+                    <input type="text" id="topic-input" placeholder="Contoh: film burn transitions" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg shadow-sm">
+                    <p class="text-xs text-blue-600 mt-2 font-bold">
+                        AI akan memikirkan penggunaan "Real Life" dari topik ini. (Contoh: untuk flashback, untuk intro, dll).
                     </p>
                 </div>
 
@@ -60,23 +60,23 @@
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-800 mb-2">Mode Output</label>
-                        <input type="text" value="Flexible (Title Only Supported)" disabled class="w-full p-4 border rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed">
+                        <input type="text" value="Flexible (Select Checkbox)" disabled class="w-full p-4 border rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed">
                     </div>
                 </div>
 
                 <div class="flex gap-6 mb-8">
-                    <label class="flex items-center space-x-3 cursor-pointer bg-white p-4 rounded-lg border border-gray-200 w-full hover:border-indigo-500 transition shadow-sm group">
-                        <input type="checkbox" id="gen-desc" checked class="w-5 h-5 text-indigo-600 rounded">
+                    <label class="flex items-center space-x-3 cursor-pointer bg-white p-4 rounded-lg border border-gray-200 w-full hover:border-blue-500 transition shadow-sm group">
+                        <input type="checkbox" id="gen-desc" checked class="w-5 h-5 text-blue-600 rounded">
                         <div class="flex flex-col">
-                            <span class="font-bold text-gray-700 group-hover:text-indigo-700">Generate Descriptions</span>
-                            <span class="text-xs text-gray-400">Min 50 words. Uncheck for Title Only.</span>
+                            <span class="font-bold text-gray-700 group-hover:text-blue-700">Generate Descriptions</span>
+                            <span class="text-xs text-gray-400">Min 50 words. Explains "Why & Where".</span>
                         </div>
                     </label>
-                    <label class="flex items-center space-x-3 cursor-pointer bg-white p-4 rounded-lg border border-gray-200 w-full hover:border-indigo-500 transition shadow-sm group">
-                        <input type="checkbox" id="gen-key" checked class="w-5 h-5 text-indigo-600 rounded">
+                    <label class="flex items-center space-x-3 cursor-pointer bg-white p-4 rounded-lg border border-gray-200 w-full hover:border-blue-500 transition shadow-sm group">
+                        <input type="checkbox" id="gen-key" checked class="w-5 h-5 text-blue-600 rounded">
                         <div class="flex flex-col">
-                            <span class="font-bold text-gray-700 group-hover:text-indigo-700">Generate Keywords</span>
-                            <span class="text-xs text-gray-400">Strict 39-42 Single Words. Uncheck for Title Only.</span>
+                            <span class="font-bold text-gray-700 group-hover:text-blue-700">Generate Keywords</span>
+                            <span class="text-xs text-gray-400">Strict 39-42 Single Words.</span>
                         </div>
                     </label>
                 </div>
@@ -93,7 +93,7 @@
                         <span id="progress-text">0/0</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
-                        <div id="progress-bar" class="bg-indigo-600 h-4 rounded-full transition-all duration-500 animate-stripes" style="width: 0%"></div>
+                        <div id="progress-bar" class="bg-blue-600 h-4 rounded-full transition-all duration-500 animate-stripes" style="width: 0%"></div>
                     </div>
                 </div>
 
@@ -118,11 +118,18 @@
         let allResults = [];
         let isProcessing = false;
         
-        // Rotasi Tema agar Title selalu unik
-        const ROTATION_THEMES = [
-            "Video Editing Workflows", "Compositing & VFX", "Broadcasting & TV",
-            "Social Media Content", "Filmmaking & Cinema", "Motion Graphics",
-            "Documentary Style", "Music Video Effects", "Corporate Video", "Abstract Art"
+        // Tema Proyek Nyata (Real World Projects) untuk memicu variasi penggunaan
+        const REAL_WORLD_CONTEXTS = [
+            "Documentary & History (e.g., archival, flashback)",
+            "Music Video & Artsy (e.g., psychedelic, beat drop)",
+            "Wedding & Sentimental (e.g., memories, soft look)",
+            "Sci-Fi & Technology (e.g., glitch, hud, digital)",
+            "Action & Sports (e.g., dynamic, fast cut)",
+            "Horror & Thriller (e.g., scary, distortion)",
+            "Corporate & Clean (e.g., presentation, background)",
+            "YouTube & Social Media (e.g., vlog intro, transition)",
+            "Fashion & Lifestyle (e.g., stylish, glamour)",
+            "News & Broadcast (e.g., overlay, lower third)"
         ];
 
         const BACKUP_KEYWORDS = [
@@ -147,7 +154,6 @@
 
             if (!apiKey) return alert("API Key is required!");
             if (!topic) return alert("Main Keyword is required!");
-            // KITA MENGIZINKAN JIKA DESC & KEY UNCHECKED (Title Only Mode)
 
             allResults = [];
             isProcessing = true;
@@ -166,15 +172,15 @@
                 const remaining = totalTarget - currentCount;
                 const thisBatchSize = Math.min(batchSize, remaining); 
                 
-                const currentTheme = ROTATION_THEMES[themeIndex % ROTATION_THEMES.length];
+                // Rotasi Konteks Nyata
+                const currentContext = REAL_WORLD_CONTEXTS[themeIndex % REAL_WORLD_CONTEXTS.length];
                 themeIndex++;
 
-                updateProgress(currentCount, totalTarget, `Processing batch ${currentCount + 1}-${currentCount + thisBatchSize}...`);
+                updateProgress(currentCount, totalTarget, `Generating batch ${currentCount + 1}-${currentCount + thisBatchSize} (Context: ${currentContext.split(' ')[0]})...`);
 
                 try {
-                    const batchResult = await fetchFromGroq(apiKey, topic, thisBatchSize, useDesc, useKey, currentTheme, currentCount);
+                    const batchResult = await fetchFromGroq(apiKey, topic, thisBatchSize, useDesc, useKey, currentContext, currentCount);
                     if (batchResult && batchResult.length > 0) {
-                        // Filter Duplikat
                         const uniqueBatch = batchResult.filter(newItem => 
                             !allResults.some(existing => existing.title === newItem.title)
                         );
@@ -206,27 +212,36 @@
             document.getElementById('result-count').innerText = `(${current} items)`;
         }
 
-        async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, theme, offset) {
+        async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, context, offset) {
             
-            // KONSTRUKSI OUTPUT DINAMIS (PENTING UNTUK CSV)
-            let outputFields = [`"title": "${topic} + [Function]"`];
-            if (useDesc) outputFields.push(`"description": "Text..."`);
+            let outputFields = [`"title": "${topic} + [Real Life Context]"`];
+            if (useDesc) outputFields.push(`"description": "Explanation 50-150 words..."`);
             if (useKey) outputFields.push(`"keywords": "tag1, tag2..."`);
 
             const jsonTemplate = `{ "assets": [ { ${outputFields.join(', ')} } ] }`;
             const mainKeywordsArr = topic.split(/\s+/).join(", ");
             
-            const systemPrompt = `You are a Metadata Engine.
-            TASK: Generate ${count} items for topic: "${topic}". Theme: ${theme}.
+            // --- UPDATED SYSTEM PROMPT: REAL LIFE LOGIC ---
+            const systemPrompt = `You are a Professional Video Editor & Metadata Expert.
             
-            1. TITLE RULES (STRICT):
-               - STRUCTURE: "${topic}" + [FUNCTION SUFFIX].
-               - NO Colors, NO Objects, NO Models. Only Usage.
-               - MUST BE UNIQUE.
-
-            ${useDesc ? `2. DESCRIPTION RULES: Min 50, Max 150 words. Technical explanation.` : ''}
+            TASK: Generate ${count} items for asset topic: "${topic}".
+            CONTEXT FOR THIS BATCH: ${context}.
             
-            ${useKey ? `3. KEYWORD RULES: Single words only. No phrases. ~50 tags.` : ''}
+            1. TITLE RULES (RELATABLE & SIMPLE):
+               - STRUCTURE: "${topic}" + [SPECIFIC REAL-WORLD USAGE].
+               - LOGIC: Ask yourself, "Where would an editor use this ${topic}?"
+               - IF "${topic}" is "Film Burn" -> usage is "for nostalgic flashback", "for wedding montage", "for cinematic intro".
+               - IF "${topic}" is "Liquid" -> usage is "for psychedelic background", "for science visual".
+               - STYLE: Simple, functional, and natural (organic).
+               - FORBIDDEN: Do NOT use colors, objects, or models.
+            
+            ${useDesc ? `2. DESCRIPTION RULES: 
+               - LENGTH: Min 50 words, Max 150 words.
+               - CONTENT: Explain *why* this asset fits the usage mentioned in the title. (e.g. "This film burn creates a warm nostalgic feeling perfect for...")` : ''}
+            
+            ${useKey ? `3. KEYWORD RULES: 
+               - FORMAT: Single words only. No phrases.
+               - QUANTITY: Target 50 (I will trim to 42).` : ''}
 
             OUTPUT JSON ONLY:
             ${jsonTemplate}`;
@@ -241,9 +256,9 @@
                     model: "llama-3.3-70b-versatile",
                     messages: [
                         { role: "system", content: systemPrompt },
-                        { role: "user", content: `Generate batch.` }
+                        { role: "user", content: `Generate batch based on context: ${context}.` }
                     ],
-                    temperature: 0.8,
+                    temperature: 0.85, // Sedikit lebih kreatif untuk variasi "Usage"
                     response_format: { type: "json_object" }
                 })
             });
@@ -255,9 +270,7 @@
                 items = content.assets || content.items || [];
             } catch (e) { return []; }
 
-            // VALIDASI JAVASCRIPT
             return items.map(item => {
-                // Hapus field yang tidak dicentang agar tidak masuk ke variable
                 if (!useDesc) delete item.description;
                 if (!useKey) delete item.keywords;
 
@@ -308,8 +321,6 @@
 
         function renderResults(items) {
             const container = document.getElementById('result-area');
-            
-            // Cek apakah data desc/key ada di item pertama
             const hasDesc = items.length > 0 && items[0].description !== undefined;
             const hasKey = items.length > 0 && items[0].keywords !== undefined;
 
@@ -331,7 +342,7 @@
 
                 if (hasDesc && item.description) {
                     descHtml = `
-                        <div class="mt-3 bg-indigo-50 p-4 rounded text-sm text-gray-800 border-l-4 border-indigo-500">
+                        <div class="mt-3 bg-blue-50 p-4 rounded text-sm text-gray-800 border-l-4 border-blue-500">
                             ${item.description}
                         </div>`;
                 }
@@ -339,7 +350,7 @@
                 return `
                 <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm mb-4">
                     <h3 class="font-bold text-lg text-slate-800 flex items-start">
-                        <span class="text-indigo-500 mr-3">#${index + 1}</span>
+                        <span class="text-blue-500 mr-3">#${index + 1}</span>
                         ${item.title}
                     </h3>
                     ${descHtml}
@@ -350,11 +361,10 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // --- FUNGSI DOWNLOAD CSV YANG DIPERBAIKI (EXCEL FIX) ---
+        // CSV DOWNLOAD FIXED (EXCEL COMPATIBLE)
         function downloadCSV() {
             if (allResults.length === 0) return;
 
-            // 1. Tentukan Header Dinamis (Cek apa yg dipilih user)
             const hasDesc = document.getElementById('gen-desc').checked;
             const hasKey = document.getElementById('gen-key').checked;
 
@@ -362,25 +372,19 @@
             if (hasDesc) headers.push("Description");
             if (hasKey) headers.push("Keywords");
 
-            // 2. Buat Konten CSV dengan BOM (Byte Order Mark) untuk Excel
-            // \uFEFF memaksa Excel membaca file sebagai UTF-8, sehingga kolom tidak berantakan
+            // BOM untuk Excel
             let csvContent = "\uFEFF" + headers.join(",") + "\r\n";
 
-            // 3. Loop Data
             allResults.forEach(item => {
                 let row = [];
-                
-                // Title (Selalu ada)
-                let cleanTitle = (item.title || '').replace(/"/g, '""'); // Escape double quotes
+                let cleanTitle = (item.title || '').replace(/"/g, '""');
                 row.push(`"${cleanTitle}"`);
 
-                // Desc (Jika dipilih)
                 if (hasDesc) {
                     let cleanDesc = (item.description || '').replace(/"/g, '""');
                     row.push(`"${cleanDesc}"`);
                 }
 
-                // Key (Jika dipilih)
                 if (hasKey) {
                     let cleanKey = (item.keywords || '').replace(/"/g, '""');
                     row.push(`"${cleanKey}"`);
@@ -389,10 +393,6 @@
                 csvContent += row.join(",") + "\r\n";
             });
 
-            // 4. Download Trigger
-            const encodedUri = encodeURI("data:text/csv;charset=utf-8," + encodeURIComponent(csvContent));
-            
-            // Nama File Dinamis
             const topic = document.getElementById('topic-input').value.replace(/\s+/g,'_');
             const type = (hasDesc && hasKey) ? "FULL" : (hasDesc ? "DESC" : (hasKey ? "KEY" : "TITLE_ONLY"));
             
