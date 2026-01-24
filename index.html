@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microstock Generator - Function Focus V8</title>
+    <title>Microstock Generator V9 - Ultimate Unique</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .tab-content { display: none; }
@@ -22,81 +22,94 @@
 </head>
 <body class="bg-gray-100 min-h-screen p-4 md:p-8">
 
-    <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
-        <div class="bg-slate-900 p-4 text-white">
-            <h1 class="text-xl font-bold">Microstock Generator (V8 - Usage Focused)</h1>
-            <p class="text-xs text-slate-300">Strict Usage Titles (No Colors/Objects) • Desc 50-150 words • Key 39-42</p>
+    <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
+        <div class="bg-indigo-900 p-5 text-white">
+            <h1 class="text-2xl font-bold">Microstock Generator (V9 - Ultimate Unique)</h1>
+            <p class="text-sm text-indigo-200 mt-1">
+                Fitur: <span class="font-bold text-white">Single Word Keywords</span> (No Phrases) • <span class="font-bold text-white">Smart Topic Rotation</span> (Anti-Duplicate Titles) • <span class="font-bold text-white">Strict Count 39-42</span>
+            </p>
         </div>
 
         <div class="flex border-b bg-gray-50">
-            <button onclick="openTab('api-tab')" id="btn-api-tab" class="tab-btn active w-1/3 py-4 font-medium hover:bg-gray-100 transition">1. API Key</button>
-            <button onclick="openTab('input-tab')" id="btn-input-tab" class="tab-btn w-1/3 py-4 font-medium hover:bg-gray-100 transition">2. Input Command</button>
-            <button onclick="openTab('output-tab')" id="btn-output-tab" class="tab-btn w-1/3 py-4 font-medium hover:bg-gray-100 transition">3. Results</button>
+            <button onclick="openTab('api-tab')" id="btn-api-tab" class="tab-btn active w-1/3 py-4 font-bold text-gray-600 hover:bg-gray-100 transition">1. API CONFIG</button>
+            <button onclick="openTab('input-tab')" id="btn-input-tab" class="tab-btn w-1/3 py-4 font-bold text-gray-600 hover:bg-gray-100 transition">2. COMMAND</button>
+            <button onclick="openTab('output-tab')" id="btn-output-tab" class="tab-btn w-1/3 py-4 font-bold text-gray-600 hover:bg-gray-100 transition">3. RESULTS</button>
         </div>
 
         <div class="p-6">
             <div id="api-tab" class="tab-content active">
-                <label class="block text-sm font-bold text-gray-700 mb-2">Groq API Key</label>
-                <input type="password" id="api-key" placeholder="gsk_..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 mb-2">
-                <p class="text-xs text-gray-500">Key disimpan lokal di browser.</p>
-                <button onclick="openTab('input-tab')" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Next Step</button>
+                <label class="block text-sm font-bold text-gray-800 mb-2">Groq API Key</label>
+                <input type="password" id="api-key" placeholder="gsk_..." class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 mb-2 shadow-sm">
+                <p class="text-xs text-gray-500">Key disimpan sementara di browser Anda (Local Session).</p>
+                <button onclick="openTab('input-tab')" class="mt-6 bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 transition shadow-lg">NEXT STEP</button>
             </div>
 
             <div id="input-tab" class="tab-content">
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Main Keyword (Topic)</label>
-                    <input type="text" id="topic-input" placeholder="e.g. film burn transitions" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg">
-                    <p class="text-xs text-blue-600 mt-1 font-semibold">Script akan menambahkan fungsi di belakang kata ini. (Contoh hasil: "film burn transitions for overlays")</p>
+                <div class="mb-8">
+                    <label class="block text-sm font-bold text-gray-800 mb-2">Main Keyword (Topik Utama)</label>
+                    <input type="text" id="topic-input" placeholder="Contoh: film burn transitions" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-lg shadow-sm">
+                    <p class="text-xs text-indigo-600 mt-2 font-bold">
+                        <span class="bg-indigo-100 px-2 py-1 rounded">INFO:</span> Judul akan otomatis menjadi: "[Topik Utama] + [Fungsi Unik]". Tidak akan ada penyebutan warna/objek.
+                    </p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="grid grid-cols-2 gap-6 mb-8">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Total Assets</label>
-                        <input type="number" id="total-count" value="10" min="1" max="500" class="w-full p-3 border rounded-lg">
+                        <label class="block text-sm font-bold text-gray-800 mb-2">Jumlah Aset (Max 500)</label>
+                        <input type="number" id="total-count" value="10" min="1" max="500" class="w-full p-4 border rounded-lg shadow-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Language</label>
-                        <input type="text" value="English Only" disabled class="w-full p-3 border rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed">
+                        <label class="block text-sm font-bold text-gray-800 mb-2">Mode Bahasa</label>
+                        <input type="text" value="English Only (Strict)" disabled class="w-full p-4 border rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed">
                     </div>
                 </div>
 
-                <div class="flex gap-4 mb-6">
-                    <label class="flex items-center space-x-2 cursor-pointer bg-gray-50 p-3 rounded border w-full hover:bg-blue-50 transition border-gray-300">
-                        <input type="checkbox" id="gen-desc" class="w-5 h-5 text-blue-600 rounded">
-                        <span>Generate Descriptions (50-150 words)</span>
+                <div class="flex gap-6 mb-8">
+                    <label class="flex items-center space-x-3 cursor-pointer bg-white p-4 rounded-lg border border-gray-200 w-full hover:border-indigo-500 transition shadow-sm group">
+                        <input type="checkbox" id="gen-desc" class="w-5 h-5 text-indigo-600 rounded">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-gray-700 group-hover:text-indigo-700">Generate Descriptions</span>
+                            <span class="text-xs text-gray-400">Min 50, Max 150 words. Detail & Technical.</span>
+                        </div>
                     </label>
-                    <label class="flex items-center space-x-2 cursor-pointer bg-gray-50 p-3 rounded border w-full hover:bg-blue-50 transition border-gray-300">
-                        <input type="checkbox" id="gen-key" checked class="w-5 h-5 text-blue-600 rounded">
-                        <span>Generate Keywords (39-42 Tags)</span>
+                    <label class="flex items-center space-x-3 cursor-pointer bg-white p-4 rounded-lg border border-gray-200 w-full hover:border-indigo-500 transition shadow-sm group">
+                        <input type="checkbox" id="gen-key" checked class="w-5 h-5 text-indigo-600 rounded">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-gray-700 group-hover:text-indigo-700">Generate Keywords</span>
+                            <span class="text-xs text-gray-400">Strict 39-42 Single Words (No phrases).</span>
+                        </div>
                     </label>
                 </div>
 
-                <button onclick="startBatchGeneration()" class="w-full bg-green-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-green-700 shadow-lg transition transform active:scale-95">
+                <button onclick="startBatchGeneration()" class="w-full bg-green-600 text-white py-4 rounded-lg font-bold text-xl hover:bg-green-700 shadow-xl transition transform active:scale-[0.99]">
                     START GENERATING
                 </button>
             </div>
 
             <div id="output-tab" class="tab-content">
-                <div id="status-container" class="hidden mb-6">
-                    <div class="flex justify-between text-sm font-bold mb-1">
+                <div id="status-container" class="hidden mb-6 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                    <div class="flex justify-between text-sm font-bold mb-2 text-gray-700">
                         <span id="status-text">Processing...</span>
-                        <span id="progress-text">0/50</span>
+                        <span id="progress-text">0/0</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
-                        <div id="progress-bar" class="bg-blue-600 h-4 rounded-full transition-all duration-500 animate-stripes" style="width: 0%"></div>
+                        <div id="progress-bar" class="bg-indigo-600 h-4 rounded-full transition-all duration-500 animate-stripes" style="width: 0%"></div>
                     </div>
                 </div>
 
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold text-gray-800">Results <span id="result-count" class="text-sm font-normal text-gray-500">(0 item)</span></h2>
-                    <button onclick="downloadCSV()" id="download-btn" class="hidden bg-black text-white px-5 py-2 rounded hover:bg-gray-800 flex items-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    <button onclick="downloadCSV()" id="download-btn" class="hidden bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 flex items-center font-bold shadow-lg transition">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         Download CSV
                     </button>
                 </div>
 
-                <div id="result-area" class="space-y-3 h-[500px] overflow-y-auto pr-2">
-                    <div class="text-center text-gray-400 py-10">No data yet. Please enter command.</div>
+                <div id="result-area" class="space-y-4 h-[500px] overflow-y-auto pr-2 pb-10">
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                        <svg class="w-16 h-16 mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        <p>Ready to generate. Please enter command.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -106,13 +119,28 @@
         let allResults = [];
         let isProcessing = false;
         
-        // Cadangan keywords general untuk memastikan minimal 39
+        // --- ROTATION THEMES (RAHASIA UNIK 500 JUDUL) ---
+        // Script akan mengirim tema berbeda untuk setiap batch agar judul tidak pernah sama.
+        const ROTATION_THEMES = [
+            "Video Editing Workflows (e.g. for timeline, for cuts)",
+            "Compositing & VFX (e.g. for overlays, for blending, alpha channel)",
+            "Broadcasting & TV (e.g. for news intro, for transition)",
+            "Social Media & Content Creation (e.g. for reels, for stories)",
+            "Filmmaking & Cinema (e.g. for cinematic look, for trailer)",
+            "Motion Graphics (e.g. for background, for kinetic type)",
+            "Documentary & Journalism (e.g. for archival footage look)",
+            "Music Video Production (e.g. for beat sync, for dynamic cut)",
+            "Corporate Presentation (e.g. for slideshow, for opener)",
+            "Abstract & Experimental Art (e.g. for texture, for glitch)"
+        ];
+
+        // Backup Keywords (Single Words Only)
         const BACKUP_KEYWORDS = [
             "footage", "video", "clip", "stock", "creative", "digital", "multimedia", 
             "content", "visual", "art", "design", "graphic", "backdrop", "effect",
             "background", "texture", "abstract", "modern", "production", "element",
-            "motion", "animation", "style", "concept", "overlay", "template", "hd", "4k",
-            "cinematic", "post production", "editing", "sequence", "layer", "composer"
+            "motion", "animation", "style", "concept", "overlay", "template", "hd", 
+            "cinematic", "post", "editing", "sequence", "layer", "render", "media"
         ];
 
         function openTab(tabId) {
@@ -131,7 +159,7 @@
 
             if (!apiKey) return alert("API Key is required!");
             if (!topic) return alert("Main Keyword is required!");
-            if (!useDesc && !useKey) return alert("Select at least Desc or Keywords!");
+            if (!useDesc && !useKey) return alert("Please select Output Type!");
 
             allResults = [];
             isProcessing = true;
@@ -142,32 +170,42 @@
             
             const batchSize = 5; 
             let currentCount = 0;
+            let themeIndex = 0;
 
-            updateProgress(0, totalTarget, "Initializing...");
+            updateProgress(0, totalTarget, "Initializing Generator...");
 
             while (currentCount < totalTarget && isProcessing) {
                 const remaining = totalTarget - currentCount;
                 const thisBatchSize = Math.min(batchSize, remaining); 
                 
-                updateProgress(currentCount, totalTarget, `Generating batch ${currentCount + 1} - ${currentCount + thisBatchSize}...`);
+                // Rotasi Tema
+                const currentTheme = ROTATION_THEMES[themeIndex % ROTATION_THEMES.length];
+                themeIndex++;
+
+                updateProgress(currentCount, totalTarget, `Processing batch ${currentCount + 1}-${currentCount + thisBatchSize} (Theme: ${currentTheme.split(' ')[0]})...`);
 
                 try {
-                    const batchResult = await fetchFromGroq(apiKey, topic, thisBatchSize, useDesc, useKey, currentCount);
+                    const batchResult = await fetchFromGroq(apiKey, topic, thisBatchSize, useDesc, useKey, currentTheme, currentCount);
                     if (batchResult && batchResult.length > 0) {
-                        allResults = [...allResults, ...batchResult];
-                        currentCount += batchResult.length;
+                        // Filter Duplikat (Client Side Check)
+                        const uniqueBatch = batchResult.filter(newItem => 
+                            !allResults.some(existing => existing.title === newItem.title)
+                        );
+                        
+                        allResults = [...allResults, ...uniqueBatch];
+                        currentCount += uniqueBatch.length; // Hanya tambah yang unik
                         renderResults(allResults); 
                     }
                 } catch (error) {
                     console.error(error);
-                    alert("API Error. Check Key.");
-                    isProcessing = false;
                 }
-                await new Promise(r => setTimeout(r, 1000));
+                
+                // Delay sedikit biar aman
+                await new Promise(r => setTimeout(r, 1500));
             }
 
             if (isProcessing) {
-                updateProgress(totalTarget, totalTarget, "Completed!");
+                updateProgress(totalTarget, totalTarget, "Generation Complete!");
                 document.getElementById('progress-bar').classList.remove('animate-stripes');
                 document.getElementById('download-btn').classList.remove('hidden');
                 isProcessing = false;
@@ -175,48 +213,42 @@
         }
 
         function updateProgress(current, total, text) {
-            const percent = (current / total) * 100;
+            const percent = Math.min((current / total) * 100, 100);
             document.getElementById('progress-bar').style.width = `${percent}%`;
             document.getElementById('progress-text').innerText = `${current}/${total}`;
             document.getElementById('status-text').innerText = text;
             document.getElementById('result-count').innerText = `(${current} items)`;
         }
 
-        async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, offset) {
+        async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, theme, offset) {
             
-            let outputFields = [`"title": "${topic} + [Usage/Function Suffix]"`];
-            if (useDesc) outputFields.push(`"description": "Technical usage description (50-150 words)..."`);
+            let outputFields = [`"title": "${topic} + [Function]"`];
+            if (useDesc) outputFields.push(`"description": "Explanation 50-150 words..."`);
             if (useKey) outputFields.push(`"keywords": "tag1, tag2..."`);
 
-            const jsonTemplate = `{
-              "assets": [
-                {
-                  ${outputFields.join(',\n                  ')}
-                }
-              ]
-            }`;
+            const jsonTemplate = `{ "assets": [ { ${outputFields.join(', ')} } ] }`;
 
             const mainKeywordsArr = topic.split(/\s+/).join(", ");
             
-            // --- UPDATED SYSTEM PROMPT: FUNCTION/USAGE FOCUS ---
-            const systemPrompt = `You are a Microstock Metadata Specialist.
+            // --- SYSTEM PROMPT (THE BRAIN) ---
+            const systemPrompt = `You are a Strict Metadata Engine.
             
             TASK: Generate ${count} items for topic: "${topic}".
-            LANGUAGE: Strict English.
+            FOCUS THEME FOR THIS BATCH: ${theme}. (Ensure all titles relate to this theme).
 
-            1. TITLE RULES (STRICT):
-               - STRUCTURE: "${topic}" + [USAGE/FUNCTION SUFFIX].
-               - ALLOWED SUFFIXES: Focus ONLY on where/how the video is used (e.g., "for overlays", "for video editing", "for compositing", "for intro sequences", "for background layer", "compatible with premiere pro").
-               - FORBIDDEN IN TITLES: DO NOT mention colors (red, blue), objects (lens, camera, glass), or models (man, woman).
-               - VARIETY: Use different usage terms for each item.
+            1. TITLE RULES (STRICT UNIQUE FUNCTION):
+               - STRUCTURE: "${topic}" + [FUNCTION SUFFIX].
+               - FORBIDDEN: Do NOT mention colors, objects, models, or numbers.
+               - ALLOWED: Only technical usage (e.g., "for overlay", "for composition", "for premiere pro", "for broadcast").
+               - UNQIUENESS: Titles MUST be different from previous output.
 
             ${useDesc ? `2. DESCRIPTION RULES:
-               - Length: Minimum 50 words, Maximum 150 words.
-               - Content: Explain technically how to use the asset (compositing, blending modes, etc.).` : ''}
+               - LENGTH: 50 to 150 words.
+               - CONTENT: Explain exactly how the asset functions in the theme "${theme}".` : ''}
             
-            ${useKey ? `3. KEYWORD RULES:
-               - Provide ~50 relevant tags. 
-               - Start with: "${mainKeywordsArr}".` : ''}
+            ${useKey ? `3. KEYWORD RULES (SINGLE WORDS ONLY):
+               - FORMAT: Single words separated by commas. NO PHRASES (e.g., "light leak" -> "light, leak").
+               - QUANTITY: Aim for 50 words (I will trim them).` : ''}
 
             OUTPUT JSON ONLY:
             ${jsonTemplate}`;
@@ -231,9 +263,9 @@
                     model: "llama-3.3-70b-versatile",
                     messages: [
                         { role: "system", content: systemPrompt },
-                        { role: "user", content: `Generate batch ${count} items (Offset ${offset}). Focus on FUNCTIONAL titles only.` }
+                        { role: "user", content: `Generate batch. Theme: ${theme}.` }
                     ],
-                    temperature: 0.8, 
+                    temperature: 0.8, // Kreativitas tinggi untuk variasi fungsi
                     response_format: { type: "json_object" }
                 })
             });
@@ -245,7 +277,7 @@
                 items = content.assets || content.items || [];
             } catch (e) { return []; }
 
-            // --- JAVASCRIPT VALIDATION ---
+            // --- JAVASCRIPT POST-PROCESSING (THE CLEANER) ---
             return items.map(item => {
                 if (!useDesc) delete item.description;
                 if (!useKey) delete item.keywords;
@@ -259,36 +291,49 @@
                     item.title = item.title.replace(/\s+/g, ' ').trim();
                 }
 
-                // 2. Description Logic (Max 150 words)
+                // 2. Description Logic (Min 50 - Max 150 words)
                 if (useDesc && item.description) {
                     let words = item.description.split(/\s+/);
-                    if (words.length > 150) {
-                        item.description = words.slice(0, 150).join(" ") + ".";
-                    }
+                    if (words.length > 150) item.description = words.slice(0, 150).join(" ") + ".";
                 }
 
-                // 3. Keyword Logic (Min 39 - Max 42)
+                // 3. KEYWORD LOGIC (SINGLE WORD ENFORCER & COUNT)
                 if (useKey && item.keywords) {
-                    let tags = item.keywords.split(',').map(s => s.trim().toLowerCase()).filter(s => s.length > 0);
+                    // Tahap 1: Split koma
+                    let rawTags = item.keywords.split(',');
                     
-                    // Priority Tags
+                    // Tahap 2: Split SPASI (Memecah 2 kata jadi 1 kata)
+                    let singleTags = [];
+                    rawTags.forEach(tag => {
+                        let words = tag.trim().split(/\s+/); // Split by space
+                        words.forEach(w => {
+                            let cleanW = w.toLowerCase().replace(/[^a-z0-9]/g, ''); // Hapus simbol aneh
+                            if (cleanW.length > 1) singleTags.push(cleanW);
+                        });
+                    });
+
+                    // Tahap 3: Hapus Duplikat
+                    let uniqueTags = [...new Set(singleTags)];
+
+                    // Tahap 4: Prioritas Main Keyword di Depan
                     const mainWords = topic.toLowerCase().split(/\s+/);
-                    tags = tags.filter(t => !mainWords.includes(t)); 
-                    tags = [...mainWords, ...tags];
+                    uniqueTags = uniqueTags.filter(t => !mainWords.includes(t));
+                    uniqueTags = [...mainWords, ...uniqueTags];
 
-                    // Fill if < 39
-                    if (tags.length < 39) {
-                        let needed = 39 - tags.length;
+                    // Tahap 5: Fill (Min 39)
+                    if (uniqueTags.length < 39) {
+                        let needed = 39 - uniqueTags.length;
                         let shuffledBackup = BACKUP_KEYWORDS.sort(() => 0.5 - Math.random());
-                        let extras = shuffledBackup.filter(k => !tags.includes(k)).slice(0, needed);
-                        tags = [...tags, ...extras];
+                        let extras = shuffledBackup.filter(k => !uniqueTags.includes(k)).slice(0, needed);
+                        uniqueTags = [...uniqueTags, ...extras];
                     }
 
-                    // Trim if > 42
-                    if (tags.length > 42) {
-                        tags = tags.slice(0, 42);
+                    // Tahap 6: Trim (Max 42)
+                    if (uniqueTags.length > 42) {
+                        uniqueTags = uniqueTags.slice(0, 42);
                     }
-                    item.keywords = tags.join(', ');
+
+                    item.keywords = uniqueTags.join(', ');
                 }
                 return item;
             });
@@ -304,29 +349,35 @@
 
                 if (hasKey && item.keywords) {
                     const count = item.keywords.split(',').length;
-                    const countColor = (count >= 39 && count <= 42) ? 'text-green-600' : 'text-red-600';
+                    const countColor = (count >= 39 && count <= 42) ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
                     keyHtml = `
-                        <div class="mt-2 text-xs">
-                            <div class="flex justify-between mb-1">
-                                <span class="font-bold text-gray-500">KEYWORDS</span>
-                                <span class="font-bold ${countColor} bg-gray-100 px-2 rounded">Count: ${count}</span>
+                        <div class="mt-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Keywords (Single Words)</span>
+                                <span class="text-xs font-bold ${countColor} px-2 py-1 rounded border border-current opacity-80">Count: ${count}</span>
                             </div>
-                            <p class="bg-gray-50 p-2 rounded border border-gray-200 text-gray-600 leading-relaxed">${item.keywords}</p>
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 text-sm text-gray-600 leading-7 break-words font-mono">
+                                ${item.keywords}
+                            </div>
                         </div>`;
                 }
 
                 if (hasDesc && item.description) {
                     const wordCount = item.description.split(' ').length;
                     descHtml = `
-                        <div class="mt-2 mb-2 bg-indigo-50 p-3 rounded text-sm text-gray-800 border-l-4 border-indigo-400">
-                            <p class="text-xs font-bold text-gray-500 uppercase mb-1">Description (${wordCount} words)</p>
+                        <div class="mt-3 bg-indigo-50 p-4 rounded-lg border-l-4 border-indigo-500 text-sm text-gray-800 leading-relaxed shadow-sm">
+                            <div class="text-xs font-bold text-indigo-400 mb-1 uppercase">Description (${wordCount} Words)</div>
                             ${item.description}
                         </div>`;
                 }
 
                 return `
-                <div class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition mb-3">
-                    <h3 class="font-bold text-lg text-slate-800 mb-1">${index + 1}. ${item.title}</h3>
+                <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 mb-4 group relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-1 flex items-start">
+                        <span class="text-indigo-500 mr-3 text-base mt-1">#${index + 1}</span>
+                        ${item.title}
+                    </h3>
                     ${descHtml}
                     ${keyHtml}
                 </div>`;
@@ -356,7 +407,7 @@
             link.setAttribute("href", encodedUri);
             const topic = document.getElementById('topic-input').value.replace(/\s+/g,'_');
             const type = headers.length === 3 ? "FULL" : (headers.includes("Keywords") ? "KEY" : "DESC");
-            link.setAttribute("download", `METADATA_${topic}_${type}_V8.csv`);
+            link.setAttribute("download", `METADATA_${topic}_${type}_V9.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
