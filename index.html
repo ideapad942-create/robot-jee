@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microstock Metadata Generator - Groq API</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Microstock Metadata Generator - Groq API (Fix)</title>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
     <style>
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -14,10 +14,10 @@
 <body class="bg-gray-50 min-h-screen p-4 md:p-8">
 
     <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-        <div class="flex border-b bg-gray-100">
-            <button onclick="openTab('api-tab')" id="btn-api-tab" class="tab-btn active px-6 py-3 font-medium">1. Konfigurasi API</button>
-            <button onclick="openTab('input-tab')" id="btn-input-tab" class="tab-btn px-6 py-3 font-medium">2. Input Perintah</button>
-            <button onclick="openTab('output-tab')" id="btn-output-tab" class="tab-btn px-6 py-3 font-medium">3. Hasil & Export</button>
+        <div class="flex border-b bg-gray-100 overflow-x-auto">
+            <button onclick="openTab('api-tab')" id="btn-api-tab" class="tab-btn active px-6 py-3 font-medium whitespace-nowrap">1. Konfigurasi API</button>
+            <button onclick="openTab('input-tab')" id="btn-input-tab" class="tab-btn px-6 py-3 font-medium whitespace-nowrap">2. Input Perintah</button>
+            <button onclick="openTab('output-tab')" id="btn-output-tab" class="tab-btn px-6 py-3 font-medium whitespace-nowrap">3. Hasil & Export</button>
         </div>
 
         <div class="p-6">
@@ -26,12 +26,13 @@
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Masukkan API Key Groq:</label>
                     <input type="password" id="api-key" placeholder="gsk_xxxx..." class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500">
+                    <p class="text-xs text-gray-500 mt-1">Key Anda tersimpan sementara di browser, aman.</p>
                 </div>
                 <div class="bg-blue-50 p-4 rounded-md border border-blue-200">
                     <p class="text-sm text-blue-800">
                         <strong>Belum punya API Key?</strong><br>
-                        Anda bisa membuatnya secara gratis di: 
-                        <a href="https://console.groq.com/keys" target="_blank" class="underline font-bold text-blue-600">Groq Console Keys</a>
+                        Generate gratis di sini: 
+                        <a href="[https://console.groq.com/keys](https://console.groq.com/keys)" target="_blank" class="underline font-bold text-blue-600">Groq Console Keys</a>
                     </p>
                 </div>
                 <button onclick="openTab('input-tab')" class="mt-6 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">Lanjut ke Input</button>
@@ -52,7 +53,7 @@
                         </div>
                         <div class="flex items-center p-3 border rounded bg-gray-50">
                             <input type="checkbox" id="gen-key" checked class="w-4 h-4 text-blue-600">
-                            <label for="gen-key" class="ml-2 text-sm">Generate Keywords (41 kata per item)</label>
+                            <label for="gen-key" class="ml-2 text-sm">Generate Keywords (41 kata/item)</label>
                         </div>
                     </div>
 
@@ -72,12 +73,14 @@
                 
                 <div id="loading-state" class="hidden text-center py-10">
                     <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto"></div>
-                    <p class="mt-2 text-gray-600">Sedang memproses ke API Groq...</p>
+                    <p class="mt-2 text-gray-600">Sedang memproses... (bisa memakan waktu 10-30 detik)</p>
                 </div>
 
-                <div id="result-area" class="space-y-4 max-h-[500px] overflow-y-auto border p-4 rounded bg-gray-50">
-                    <p class="text-gray-400 italic">Belum ada data yang di-generate.</p>
+                <div id="result-area" class="space-y-4 max-h-[500px] overflow-y-auto border p-4 rounded bg-gray-50 text-sm">
+                    <p class="text-gray-400 italic">Hasil generate akan muncul di sini...</p>
                 </div>
+                
+                <div id="debug-area" class="mt-4 p-2 bg-red-50 text-red-600 text-xs hidden border border-red-200"></div>
             </div>
         </div>
     </div>
@@ -93,7 +96,7 @@
         }
 
         async function generateMetadata() {
-            const apiKey = document.getElementById('api-key').value;
+            const apiKey = document.getElementById('api-key').value.trim();
             const mainPrompt = document.getElementById('main-prompt').value;
             const needDesc = document.getElementById('gen-desc').checked;
             const needKey = document.getElementById('gen-key').checked;
@@ -101,22 +104,35 @@
             if (!apiKey) return alert("Harap masukkan API Key!");
             if (!mainPrompt) return alert("Harap masukkan perintah!");
 
-            // Prepare UI
+            // UI Reset
             openTab('output-tab');
             document.getElementById('loading-state').classList.remove('hidden');
             document.getElementById('result-area').innerHTML = '';
+            document.getElementById('debug-area').classList.add('hidden');
             document.getElementById('download-btn').classList.add('hidden');
 
-            // Construct System Prompt
-            let instructions = `Anda adalah pakar metadata Microstock US. Fokus pada fungsi asset, BUKAN warna, objek manusia, atau model. 
-            Title harus < 100 karakter (bukan kata, sesuai standar microstock).
-            ${needDesc ? 'Berikan deskripsi 150-200 kata fokus pada kegunaan teknis.' : ''}
-            ${needKey ? 'Berikan tepat 41 kata kunci (keywords) dipisahkan koma. Contoh: "light, leak, ..." ' : ''}
-            Output harus dalam format JSON ARRAY dengan key: "title" ${needDesc ? ', "description"' : ''} ${needKey ? ', "keywords"' : ''}.
-            Sesuaikan jumlah item dengan permintaan user: "${mainPrompt}".`;
+            // STRICT JSON INSTRUCTION
+            // Kita memaksa AI membungkus array dalam object {"assets": [...]}
+            let instructions = `Anda adalah mesin generator JSON metadata Microstock. 
+            Tugas: Buat metadata berdasarkan permintaan user: "${mainPrompt}".
+            
+            ATURAN OUTPUT:
+            1. Output WAJIB HANYA berupa JSON yang valid. Jangan ada teks lain sebelum/sesudah JSON.
+            2. Struktur JSON harus persis seperti ini:
+            {
+              "assets": [
+                {
+                  "title": "Judul fungsi asset (max 100 chars, no color/object names)",
+                  ${needDesc ? '"description": "Deskripsi teknis (150-200 kata)",' : ''}
+                  ${needKey ? '"keywords": "keyword1, keyword2, ... (total 41 kata dipisah koma)",' : ''}
+                }
+              ]
+            }
+            3. Jika user minta 50, buat array berisi 50 item.
+            4. Jangan gunakan markdown block (\`\`\`json). Cukup raw text JSON.`;
 
             try {
-                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                const response = await fetch('[https://api.groq.com/openai/v1/chat/completions](https://api.groq.com/openai/v1/chat/completions)', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${apiKey}`,
@@ -126,23 +142,55 @@
                         model: "llama-3.3-70b-versatile",
                         messages: [
                             { role: "system", content: instructions },
-                            { role: "user", content: mainPrompt }
+                            { role: "user", content: "Mulai generate sesuai instruksi sistem." }
                         ],
+                        temperature: 0.5, // Mengurangi kreatifitas liar agar format JSON stabil
                         response_format: { type: "json_object" }
                     })
                 });
 
-                const data = await response.json();
-                const content = JSON.parse(data.choices[0].message.content);
-                
-                // Asumsikan Groq mengembalikan object dengan key 'data' atau 'items'
-                const items = content.items || content.data || Object.values(content)[0];
-                generatedData = items;
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                }
 
+                const data = await response.json();
+                let rawContent = data.choices[0].message.content;
+
+                // CLEANUP: Kadang AI tetap memberi markdown block ```json ... ```
+                rawContent = rawContent.replace(/```json/g, "").replace(/```/g, "").trim();
+
+                let parsedContent;
+                try {
+                    parsedContent = JSON.parse(rawContent);
+                } catch (e) {
+                    // Jika parsing gagal, tampilkan raw text untuk debug
+                    document.getElementById('debug-area').innerText = "Gagal Parse JSON. Raw Output:\n" + rawContent;
+                    document.getElementById('debug-area').classList.remove('hidden');
+                    throw new Error("Format JSON dari AI rusak. Coba generate ulang.");
+                }
+                
+                // DATA EXTRACTION (Fix untuk error items.map)
+                // Kita cari key 'assets', atau 'items', atau 'data'.
+                let items = parsedContent.assets || parsedContent.items || parsedContent.data;
+
+                // Fallback: Jika ternyata root-nya langsung array
+                if (!items && Array.isArray(parsedContent)) {
+                    items = parsedContent;
+                }
+
+                // Validasi akhir
+                if (!items || !Array.isArray(items)) {
+                    console.log("Struktur JSON diterima:", parsedContent);
+                    throw new Error("Struktur JSON tidak dikenali (bukan array). Cek Console F12.");
+                }
+
+                generatedData = items;
                 displayResults(items);
                 document.getElementById('download-btn').classList.remove('hidden');
+
             } catch (error) {
                 alert("Terjadi kesalahan: " + error.message);
+                console.error(error);
             } finally {
                 document.getElementById('loading-state').classList.add('hidden');
             }
@@ -150,12 +198,21 @@
 
         function displayResults(items) {
             const container = document.getElementById('result-area');
+            
+            if (items.length === 0) {
+                container.innerHTML = '<p class="text-red-500">Hasil kosong.</p>';
+                return;
+            }
+
             container.innerHTML = items.map((item, index) => `
-                <div class="p-3 border-b border-gray-200">
-                    <p class="font-bold text-blue-600">Item ${index + 1}</p>
-                    <p><strong>Title:</strong> ${item.title}</p>
-                    ${item.description ? `<p><strong>Desc:</strong> ${item.description}</p>` : ''}
-                    ${item.keywords ? `<p><strong>Keywords:</strong> ${item.keywords}</p>` : ''}
+                <div class="p-4 border-b border-gray-200 bg-white rounded mb-2 shadow-sm">
+                    <div class="flex justify-between">
+                        <span class="font-bold text-blue-600">Asset #${index + 1}</span>
+                        <span class="text-xs text-gray-400">Title Length: ${item.title ? item.title.length : 0}</span>
+                    </div>
+                    <p class="mt-1"><strong>Title:</strong> ${item.title || '-'}</p>
+                    ${item.description ? `<p class="mt-2 text-gray-700 text-xs text-justify bg-gray-50 p-2 rounded"><strong>Desc:</strong> ${item.description}</p>` : ''}
+                    ${item.keywords ? `<p class="mt-2 text-green-700 text-xs"><strong>Keywords:</strong> ${item.keywords}</p>` : ''}
                 </div>
             `).join('');
         }
@@ -165,14 +222,17 @@
 
             let csvContent = "data:text/csv;charset=utf-8,";
             
-            // Header
-            const keys = Object.keys(generatedData[0]);
-            csvContent += keys.join(",") + "\r\n";
+            // Ambil headers dinamis dari item pertama
+            const headers = Object.keys(generatedData[0]);
+            csvContent += headers.join(",") + "\r\n";
 
-            // Rows
+            // Buat baris
             generatedData.forEach(item => {
-                const row = keys.map(key => {
-                    let val = item[key] ? item[key].toString().replace(/"/g, '""') : '';
+                const row = headers.map(header => {
+                    let val = item[header] ? item[header].toString() : '';
+                    // Escape tanda kutip ganda (") menjadi ("") agar CSV valid
+                    val = val.replace(/"/g, '""');
+                    // Bungkus setiap field dengan tanda kutip
                     return `"${val}"`;
                 });
                 csvContent += row.join(",") + "\r\n";
@@ -181,9 +241,10 @@
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "microstock_metadata.csv");
+            link.setAttribute("download", `microstock_metadata_${new Date().getTime()}.csv`);
             document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
         }
     </script>
 </body>
