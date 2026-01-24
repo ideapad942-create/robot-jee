@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microstock Generator Pro - V7 (English Only)</title>
+    <title>Microstock Generator - Function Focus V8</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .tab-content { display: none; }
@@ -23,14 +23,14 @@
 <body class="bg-gray-100 min-h-screen p-4 md:p-8">
 
     <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
-        <div class="bg-indigo-900 p-4 text-white">
-            <h1 class="text-xl font-bold">Microstock Generator (V7 - Strict English)</h1>
-            <p class="text-xs text-indigo-200">Force English Language • Unique Titles • Strict Keywords (39-42)</p>
+        <div class="bg-slate-900 p-4 text-white">
+            <h1 class="text-xl font-bold">Microstock Generator (V8 - Usage Focused)</h1>
+            <p class="text-xs text-slate-300">Strict Usage Titles (No Colors/Objects) • Desc 50-150 words • Key 39-42</p>
         </div>
 
         <div class="flex border-b bg-gray-50">
             <button onclick="openTab('api-tab')" id="btn-api-tab" class="tab-btn active w-1/3 py-4 font-medium hover:bg-gray-100 transition">1. API Key</button>
-            <button onclick="openTab('input-tab')" id="btn-input-tab" class="tab-btn w-1/3 py-4 font-medium hover:bg-gray-100 transition">2. Command</button>
+            <button onclick="openTab('input-tab')" id="btn-input-tab" class="tab-btn w-1/3 py-4 font-medium hover:bg-gray-100 transition">2. Input Command</button>
             <button onclick="openTab('output-tab')" id="btn-output-tab" class="tab-btn w-1/3 py-4 font-medium hover:bg-gray-100 transition">3. Results</button>
         </div>
 
@@ -38,15 +38,15 @@
             <div id="api-tab" class="tab-content active">
                 <label class="block text-sm font-bold text-gray-700 mb-2">Groq API Key</label>
                 <input type="password" id="api-key" placeholder="gsk_..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 mb-2">
-                <p class="text-xs text-gray-500">Your key is stored locally in your browser session.</p>
+                <p class="text-xs text-gray-500">Key disimpan lokal di browser.</p>
                 <button onclick="openTab('input-tab')" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Next Step</button>
             </div>
 
             <div id="input-tab" class="tab-content">
                 <div class="mb-6">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Main Keyword (Title Prefix)</label>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Main Keyword (Topic)</label>
                     <input type="text" id="topic-input" placeholder="e.g. film burn transitions" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg">
-                    <p class="text-xs text-indigo-600 mt-1 font-semibold">The script will lock this phrase at the start of every title.</p>
+                    <p class="text-xs text-blue-600 mt-1 font-semibold">Script akan menambahkan fungsi di belakang kata ini. (Contoh hasil: "film burn transitions for overlays")</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mb-6">
@@ -55,15 +55,15 @@
                         <input type="number" id="total-count" value="10" min="1" max="500" class="w-full p-3 border rounded-lg">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Language Mode</label>
-                        <input type="text" value="English Only (Strict)" disabled class="w-full p-3 border rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Language</label>
+                        <input type="text" value="English Only" disabled class="w-full p-3 border rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed">
                     </div>
                 </div>
 
                 <div class="flex gap-4 mb-6">
                     <label class="flex items-center space-x-2 cursor-pointer bg-gray-50 p-3 rounded border w-full hover:bg-blue-50 transition border-gray-300">
                         <input type="checkbox" id="gen-desc" class="w-5 h-5 text-blue-600 rounded">
-                        <span>Generate Descriptions (English)</span>
+                        <span>Generate Descriptions (50-150 words)</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer bg-gray-50 p-3 rounded border w-full hover:bg-blue-50 transition border-gray-300">
                         <input type="checkbox" id="gen-key" checked class="w-5 h-5 text-blue-600 rounded">
@@ -106,12 +106,13 @@
         let allResults = [];
         let isProcessing = false;
         
-        // Backup keywords (English Only) to ensure we hit min 39 tags
+        // Cadangan keywords general untuk memastikan minimal 39
         const BACKUP_KEYWORDS = [
             "footage", "video", "clip", "stock", "creative", "digital", "multimedia", 
             "content", "visual", "art", "design", "graphic", "backdrop", "effect",
             "background", "texture", "abstract", "modern", "production", "element",
-            "motion", "animation", "style", "concept", "overlay", "template", "hd", "4k"
+            "motion", "animation", "style", "concept", "overlay", "template", "hd", "4k",
+            "cinematic", "post production", "editing", "sequence", "layer", "composer"
         ];
 
         function openTab(tabId) {
@@ -130,7 +131,7 @@
 
             if (!apiKey) return alert("API Key is required!");
             if (!topic) return alert("Main Keyword is required!");
-            if (!useDesc && !useKey) return alert("Please select at least one output type (Desc or Keywords)!");
+            if (!useDesc && !useKey) return alert("Select at least Desc or Keywords!");
 
             allResults = [];
             isProcessing = true;
@@ -152,20 +153,16 @@
 
                 try {
                     const batchResult = await fetchFromGroq(apiKey, topic, thisBatchSize, useDesc, useKey, currentCount);
-                    
                     if (batchResult && batchResult.length > 0) {
                         allResults = [...allResults, ...batchResult];
                         currentCount += batchResult.length;
                         renderResults(allResults); 
-                    } else {
-                        console.warn("Empty batch received, retrying...");
                     }
                 } catch (error) {
                     console.error(error);
-                    alert("Error communicating with AI. Please check API Key.");
+                    alert("API Error. Check Key.");
                     isProcessing = false;
                 }
-
                 await new Promise(r => setTimeout(r, 1000));
             }
 
@@ -187,9 +184,8 @@
 
         async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, offset) {
             
-            // Build Dynamic JSON Structure
-            let outputFields = [`"title": "${topic} + [UNIQUE Suffix]"`];
-            if (useDesc) outputFields.push(`"description": "Technical description in English..."`);
+            let outputFields = [`"title": "${topic} + [Usage/Function Suffix]"`];
+            if (useDesc) outputFields.push(`"description": "Technical usage description (50-150 words)..."`);
             if (useKey) outputFields.push(`"keywords": "tag1, tag2..."`);
 
             const jsonTemplate = `{
@@ -202,34 +198,28 @@
 
             const mainKeywordsArr = topic.split(/\s+/).join(", ");
             
-            // --- STRICT ENGLISH SYSTEM PROMPT ---
-            const systemPrompt = `You are a strict English Microstock Metadata Expert.
+            // --- UPDATED SYSTEM PROMPT: FUNCTION/USAGE FOCUS ---
+            const systemPrompt = `You are a Microstock Metadata Specialist.
             
-            TASK: Generate ${count} unique metadata items for the main topic: "${topic}".
-            
-            CRITICAL RULES:
-            1. LANGUAGE: ALL OUTPUT MUST BE IN ENGLISH ONLY. Do NOT use Indonesian or any other language.
-            
-            2. TITLE RULES:
-               - MUST START with the exact phrase: "${topic}".
-               - MUST be followed by a UNIQUE suffix describing function/style/context.
-               - Example Pattern: "${topic} for [use case]", "${topic} with [visual style]", "${topic} isolated on [background]".
-               - VARIETY IS KEY. Do not repeat the same suffix (e.g., don't use "for overlays" 10 times).
-            
-            ${useDesc ? `3. DESCRIPTION RULES:
-               - Strict Limit: Max 150 words.
-               - Language: Professional English.
-               - Content: Describe the visual effect, technical usage (e.g., for compositing), and mood.` : ''}
-            
-            ${useKey ? `4. KEYWORD RULES:
-               - Provide roughly 50 relevant English tags (I will trim them later).
-               - FIRST tags must be: "${mainKeywordsArr}".
-               - NO Indonesian tags.` : ''}
+            TASK: Generate ${count} items for topic: "${topic}".
+            LANGUAGE: Strict English.
 
-            OUTPUT FORMAT (JSON ONLY):
+            1. TITLE RULES (STRICT):
+               - STRUCTURE: "${topic}" + [USAGE/FUNCTION SUFFIX].
+               - ALLOWED SUFFIXES: Focus ONLY on where/how the video is used (e.g., "for overlays", "for video editing", "for compositing", "for intro sequences", "for background layer", "compatible with premiere pro").
+               - FORBIDDEN IN TITLES: DO NOT mention colors (red, blue), objects (lens, camera, glass), or models (man, woman).
+               - VARIETY: Use different usage terms for each item.
+
+            ${useDesc ? `2. DESCRIPTION RULES:
+               - Length: Minimum 50 words, Maximum 150 words.
+               - Content: Explain technically how to use the asset (compositing, blending modes, etc.).` : ''}
+            
+            ${useKey ? `3. KEYWORD RULES:
+               - Provide ~50 relevant tags. 
+               - Start with: "${mainKeywordsArr}".` : ''}
+
+            OUTPUT JSON ONLY:
             ${jsonTemplate}`;
-
-            const userPrompt = `Generate batch ${count} items (Offset ${offset}). Ensure strict English and unique titles.`;
 
             const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
@@ -241,9 +231,9 @@
                     model: "llama-3.3-70b-versatile",
                     messages: [
                         { role: "system", content: systemPrompt },
-                        { role: "user", content: userPrompt }
+                        { role: "user", content: `Generate batch ${count} items (Offset ${offset}). Focus on FUNCTIONAL titles only.` }
                     ],
-                    temperature: 0.85, // Higher temp = More variety in Titles
+                    temperature: 0.8, 
                     response_format: { type: "json_object" }
                 })
             });
@@ -255,25 +245,21 @@
                 items = content.assets || content.items || [];
             } catch (e) { return []; }
 
-            // --- JAVASCRIPT POST-PROCESSING ---
+            // --- JAVASCRIPT VALIDATION ---
             return items.map(item => {
-                // 1. Cleanup Unrequested Fields
                 if (!useDesc) delete item.description;
                 if (!useKey) delete item.keywords;
 
-                // 2. FORCE TITLE PREFIX
+                // 1. Force Title Prefix
                 if (item.title) {
-                    // Normalize case to check prefix
                     if (!item.title.toLowerCase().startsWith(topic.toLowerCase())) {
-                        // Remove topic if it appears elsewhere to avoid duplication
                         let suffix = item.title.replace(new RegExp(topic, 'gi'), '').trim();
                         item.title = `${topic} ${suffix}`;
                     }
-                    // Fix double spaces
                     item.title = item.title.replace(/\s+/g, ' ').trim();
                 }
 
-                // 3. DESCRIPTION TRUNCATION (Max 150 Words)
+                // 2. Description Logic (Max 150 words)
                 if (useDesc && item.description) {
                     let words = item.description.split(/\s+/);
                     if (words.length > 150) {
@@ -281,30 +267,27 @@
                     }
                 }
 
-                // 4. KEYWORD LOGIC (Min 39 - Max 42)
+                // 3. Keyword Logic (Min 39 - Max 42)
                 if (useKey && item.keywords) {
-                    // Split & Clean
                     let tags = item.keywords.split(',').map(s => s.trim().toLowerCase()).filter(s => s.length > 0);
                     
-                    // Force Main Keywords at Start
+                    // Priority Tags
                     const mainWords = topic.toLowerCase().split(/\s+/);
                     tags = tags.filter(t => !mainWords.includes(t)); 
                     tags = [...mainWords, ...tags];
 
-                    // FILL if < 39
+                    // Fill if < 39
                     if (tags.length < 39) {
                         let needed = 39 - tags.length;
-                        // Add from backup (randomized slightly to avoid exact same patterns)
                         let shuffledBackup = BACKUP_KEYWORDS.sort(() => 0.5 - Math.random());
                         let extras = shuffledBackup.filter(k => !tags.includes(k)).slice(0, needed);
                         tags = [...tags, ...extras];
                     }
 
-                    // TRIM if > 42
+                    // Trim if > 42
                     if (tags.length > 42) {
                         tags = tags.slice(0, 42);
                     }
-
                     item.keywords = tags.join(', ');
                 }
                 return item;
@@ -325,8 +308,8 @@
                     keyHtml = `
                         <div class="mt-2 text-xs">
                             <div class="flex justify-between mb-1">
-                                <span class="font-bold text-gray-500">KEYWORDS (ENGLISH)</span>
-                                <span class="font-bold ${countColor} bg-gray-100 px-2 rounded">Count: ${count} (Target: 39-42)</span>
+                                <span class="font-bold text-gray-500">KEYWORDS</span>
+                                <span class="font-bold ${countColor} bg-gray-100 px-2 rounded">Count: ${count}</span>
                             </div>
                             <p class="bg-gray-50 p-2 rounded border border-gray-200 text-gray-600 leading-relaxed">${item.keywords}</p>
                         </div>`;
@@ -343,7 +326,7 @@
 
                 return `
                 <div class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition mb-3">
-                    <h3 class="font-bold text-lg text-indigo-900 mb-1">${index + 1}. ${item.title}</h3>
+                    <h3 class="font-bold text-lg text-slate-800 mb-1">${index + 1}. ${item.title}</h3>
                     ${descHtml}
                     ${keyHtml}
                 </div>`;
@@ -355,7 +338,6 @@
         function downloadCSV() {
             if (allResults.length === 0) return;
             
-            // Dynamic Headers
             let headers = ["Title"];
             if (allResults[0].description !== undefined) headers.push("Description");
             if (allResults[0].keywords !== undefined) headers.push("Keywords");
@@ -372,11 +354,9 @@
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            
             const topic = document.getElementById('topic-input').value.replace(/\s+/g,'_');
             const type = headers.length === 3 ? "FULL" : (headers.includes("Keywords") ? "KEY" : "DESC");
-            
-            link.setAttribute("download", `METADATA_${topic}_${type}_EN.csv`);
+            link.setAttribute("download", `METADATA_${topic}_${type}_V8.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
