@@ -85,7 +85,7 @@
             <div id="input-tab" class="tab-content">
                 <div class="mb-8">
                     <label class="block text-sm font-bold text-gray-800 mb-2">Masukkan Keyword (Topik Utama)</label>
-                    <input type="text" id="topic-input" placeholder="Contoh: light leak transitions" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg shadow-sm">
+                    <input type="text" id="topic-input" placeholder="Contoh: film burn" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-lg shadow-sm">
                     <p class="text-xs text-blue-600 mt-2 font-medium">
                         *Script otomatis.
                     </p>
@@ -172,7 +172,6 @@
             showToast("API Key Berhasil Disimpan! ✅");
         }
 
-        // --- BACKUP KEYWORDS: Ditambah agar cukup untuk memenuhi kuota 39 keyword ---
         const BACKUP_KEYWORDS = [
             "footage", "video", "clip", "stock", "creative", "digital", "multimedia", 
             "content", "visual", "art", "design", "graphic", "backdrop", "effect",
@@ -199,7 +198,7 @@
             setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        // --- FUNGSI COPY (AMAN) ---
+        // --- FUNGSI COPY ---
         function copyToClipboard(encodedText) {
             try {
                 const text = decodeURIComponent(encodedText);
@@ -322,29 +321,27 @@
 
         async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, offset) {
             
-            let outputFields = [`"title": "Descriptive factual title..."`];
+            let outputFields = [`"title": "Title starts with topic..."`];
             if (useDesc) outputFields.push(`"description": "Descriptive text..."`);
             if (useKey) outputFields.push(`"keywords": "tag1, tag2..."`);
 
             const jsonTemplate = `{ "assets": [ { ${outputFields.join(', ')} } ] }`;
             
-            // --- LOGIKA PROMPT DISESUAIKAN PERMINTAAN USER (Adobe Stock Style) ---
-            const systemPrompt = `You are a Microstock Metadata Expert following Adobe Stock guidelines.
+            // --- LOGIKA TITLE DIUBAH SESUAI REQUEST ---
+            const systemPrompt = `You are a Microstock Metadata Expert.
             TASK: Generate ${count} metadata items for: "${topic}".
             
-            1. TITLE RULES (Descriptive & Factual):
-               - STRUCTURE: [Subject/Model] + [Action/Event] + [Object/Prop] + [Setting/Location].
-               - DO: Be accurate, relevant, descriptive, and precise. Mention specific demographics (race, gender, age) if applicable.
-               - DO NOT: Use formal sentence structures. Keep it readable.
-               - DO NOT: Include brand names, camera specs (4k, HD), or famous people/characters.
-               - EXAMPLE: "Gay couple hugging in the park", "Young woman playing fetch with Jack Russell Terrier on beach".
+            1. TITLE RULES (STRICT):
+               - MUST START WITH: "${topic}" exactly at the beginning.
+               - FOLLOWED BY: Function, Usage, or Action (e.g., overlay, transition, background, effect).
+               - STYLE: Organic, functional, professional.
+               - DO NOT INCLUDE: Specific colors (Red, Blue), "HD", "4K", specific models.
+               - EXAMPLE (if topic is "Film Burn"): "Film burn overlay for vintage video transition effect".
+               - EXAMPLE (if topic is "Light Leak"): "Light leak background for organic camera flash effect".
 
-            ${useDesc ? `2. DESCRIPTION RULES: No quotation marks. Min 50 words. Describe the scene, mood, lighting, and action in detail.` : ''}
+            ${useDesc ? `2. DESCRIPTION RULES: No quotation marks. Min 50 words.` : ''}
             
-            ${useKey ? `3. KEYWORD RULES:
-               - Include: Specific actions, objects, emotions, demographics (if people), setting details.
-               - FORBIDDEN: "hd", "4k", "8k", "resolution", brand names, camera specs.
-               - FORMAT: Single words separated by commas.` : ''}
+            ${useKey ? `3. KEYWORD RULES: NO "hd", "4k", "8k", "resolution". Single words only.` : ''}
 
             OUTPUT JSON ONLY:
             ${jsonTemplate}`;
@@ -382,14 +379,19 @@
                 if (!useKey) delete item.keywords;
 
                 if (item.title) {
-                    item.title = item.title.replace(/"/g, '').trim();
+                    let cleanTitle = item.title.replace(/"/g, '').trim();
+                    // MEMASTIKAN TITLE DIMULAI DENGAN TOPIC
+                    const regex = new RegExp(`^${topic}`, 'i');
+                    if (!regex.test(cleanTitle)) {
+                        cleanTitle = `${topic} ${cleanTitle}`;
+                    }
+                    item.title = cleanTitle;
                 }
 
                 if (useDesc && item.description) {
                     item.description = item.description.replace(/"/g, '').replace(/'/g, '').trim();
                 }
 
-                // --- LOGIKA KEYWORD: MIN 39, MAX 42 ---
                 if (useKey && item.keywords) {
                     let rawTags = item.keywords.split(',');
                     let singleTags = [];
@@ -402,24 +404,16 @@
                     });
                     
                     let uniqueTags = [...new Set(singleTags)];
-                    
-                    // Pastikan keyword topik utama masuk
                     const mainWords = topic.toLowerCase().split(/\s+/);
                     uniqueTags = uniqueTags.filter(t => !mainWords.includes(t));
                     uniqueTags = [...mainWords, ...uniqueTags];
 
-                    // LOGIKA MATEMATIKA: Tambah jika kurang dari 39
                     if (uniqueTags.length < 39) {
                         let needed = 39 - uniqueTags.length;
-                        // Ambil backup yang belum ada di uniqueTags
                         let extras = BACKUP_KEYWORDS.filter(k => !uniqueTags.includes(k)).slice(0, needed);
                         uniqueTags = [...uniqueTags, ...extras];
                     }
-                    
-                    // LOGIKA MATEMATIKA: Potong jika lebih dari 42
-                    if (uniqueTags.length > 42) {
-                        uniqueTags = uniqueTags.slice(0, 42);
-                    }
+                    if (uniqueTags.length > 42) uniqueTags = uniqueTags.slice(0, 42);
                     
                     item.keywords = uniqueTags.join(', ');
                 }
@@ -441,7 +435,6 @@
 
                 if (hasKey && item.keywords) {
                     const count = item.keywords.split(',').length;
-                    // Indikator warna: Hijau jika 39-42, Merah jika di luar itu
                     const countColor = (count >= 39 && count <= 42) ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
                     keyHtml = `
                         <div class="mt-4 pt-4 border-t border-gray-100 relative">
@@ -482,7 +475,7 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // --- FUNGSI DOWNLOAD CSV (SESUAI LOGIKA CHECKBOX) ---
+        // --- FUNGSI DOWNLOAD CSV ---
         function downloadCSV() {
             if (!allResults || allResults.length === 0) {
                 alert("Data kosong! Silakan generate terlebih dahulu.");
@@ -492,7 +485,6 @@
             const useDesc = document.getElementById('gen-desc').checked;
             const useKey = document.getElementById('gen-key').checked;
 
-            // Header dinamis
             let headers = ["Title"];
             if (useDesc) headers.push("Description");
             if (useKey) headers.push("Keywords");
@@ -501,18 +493,14 @@
 
             allResults.forEach(item => {
                 let row = [];
-                
-                // 1. Title (Selalu ada)
                 let cleanTitle = (item.title || '').replace(/"/g, '""');
                 row.push(`"${cleanTitle}"`);
                 
-                // 2. Description (Cek kondisi)
                 if (useDesc) {
                     let cleanDesc = (item.description || '').replace(/"/g, '""').replace(/\n/g, ' '); 
                     row.push(`"${cleanDesc}"`);
                 }
 
-                // 3. Keywords (Cek kondisi)
                 if (useKey) {
                     let cleanKey = (item.keywords || '').replace(/"/g, '""');
                     row.push(`"${cleanKey}"`);
@@ -526,7 +514,6 @@
             
             const topic = document.getElementById('topic-input').value.replace(/[^a-zA-Z0-9]/g, '_') || 'metadata';
             
-            // Nama file dinamis
             let type = "TITLE_ONLY";
             if (useDesc && useKey) type = "FULL";
             else if (useDesc) type = "DESC";
