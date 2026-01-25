@@ -172,16 +172,15 @@
             showToast("API Key Berhasil Disimpan! ✅");
         }
 
-        // --- DIUPDATE: Menambah kata cadangan agar pasti bisa mencapai minimal 39 ---
+        // --- BACKUP KEYWORDS: Ditambah agar cukup untuk memenuhi kuota 39 keyword ---
         const BACKUP_KEYWORDS = [
             "footage", "video", "clip", "stock", "creative", "digital", "multimedia", 
             "content", "visual", "art", "design", "graphic", "backdrop", "effect",
             "background", "abstract", "modern", "production", "element",
             "motion", "animation", "style", "concept", "overlay", "template", 
             "cinematic", "post", "editing", "sequence", "layer", "render", "media",
-            "presentation", "corporate", "commercial", "marketing", "advertising", 
-            "promo", "branding", "business", "technology", "display", "monitor", 
-            "screen", "view", "scene", "shot"
+            "shot", "scene", "view", "display", "monitor", "technology", "business",
+            "commercial", "marketing", "advertising", "promo", "branding", "corporate"
         ];
         
         const FORBIDDEN_KEYS = ["hd", "4k", "8k", "1080p", "720p", "high", "definition", "resolution", "uhd"];
@@ -200,7 +199,7 @@
             setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        // --- FUNGSI COPY (Safe Mode) ---
+        // --- FUNGSI COPY (AMAN) ---
         function copyToClipboard(encodedText) {
             try {
                 const text = decodeURIComponent(encodedText);
@@ -323,24 +322,29 @@
 
         async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, offset) {
             
-            let outputFields = [`"title": "Clean functional title..."`];
-            if (useDesc) outputFields.push(`"description": "Clean description..."`);
+            let outputFields = [`"title": "Descriptive factual title..."`];
+            if (useDesc) outputFields.push(`"description": "Descriptive text..."`);
             if (useKey) outputFields.push(`"keywords": "tag1, tag2..."`);
 
             const jsonTemplate = `{ "assets": [ { ${outputFields.join(', ')} } ] }`;
             
-            const systemPrompt = `You are a Microstock Metadata Expert.
+            // --- LOGIKA PROMPT DISESUAIKAN PERMINTAAN USER (Adobe Stock Style) ---
+            const systemPrompt = `You are a Microstock Metadata Expert following Adobe Stock guidelines.
             TASK: Generate ${count} metadata items for: "${topic}".
             
-            1. TITLE RULES:
-               - STRUCTURE: "${topic}" + [FUNCTION/ACTION/USAGE].
-               - NO "Vibrant", "Soft", "Warm", "Cozy", "Red", "Blue", "4k", "HD".
-               - EXCEPTION: If user topic is "texture", allow texture words.
-               - STYLE: Professional, descriptive, plain.
+            1. TITLE RULES (Descriptive & Factual):
+               - STRUCTURE: [Subject/Model] + [Action/Event] + [Object/Prop] + [Setting/Location].
+               - DO: Be accurate, relevant, descriptive, and precise. Mention specific demographics (race, gender, age) if applicable.
+               - DO NOT: Use formal sentence structures. Keep it readable.
+               - DO NOT: Include brand names, camera specs (4k, HD), or famous people/characters.
+               - EXAMPLE: "Gay couple hugging in the park", "Young woman playing fetch with Jack Russell Terrier on beach".
 
-            ${useDesc ? `2. DESCRIPTION RULES: No quotation marks inside text. Min 50 words.` : ''}
+            ${useDesc ? `2. DESCRIPTION RULES: No quotation marks. Min 50 words. Describe the scene, mood, lighting, and action in detail.` : ''}
             
-            ${useKey ? `3. KEYWORD RULES: NO "hd", "4k", "8k", "resolution". Single words only.` : ''}
+            ${useKey ? `3. KEYWORD RULES:
+               - Include: Specific actions, objects, emotions, demographics (if people), setting details.
+               - FORBIDDEN: "hd", "4k", "8k", "resolution", brand names, camera specs.
+               - FORMAT: Single words separated by commas.` : ''}
 
             OUTPUT JSON ONLY:
             ${jsonTemplate}`;
@@ -355,9 +359,9 @@
                     model: "llama-3.3-70b-versatile",
                     messages: [
                         { role: "system", content: systemPrompt },
-                        { role: "user", content: `Generate batch (Offset ${offset}). Clean style.` }
+                        { role: "user", content: `Generate batch (Offset ${offset}).` }
                     ],
-                    temperature: 0.8,
+                    temperature: 0.7,
                     response_format: { type: "json_object" }
                 })
             });
@@ -379,18 +383,13 @@
 
                 if (item.title) {
                     item.title = item.title.replace(/"/g, '').trim();
-                    if (!item.title.toLowerCase().includes(topic.toLowerCase())) {
-                        item.title = `${topic} for video editing ${item.title}`;
-                    }
                 }
 
                 if (useDesc && item.description) {
                     item.description = item.description.replace(/"/g, '').replace(/'/g, '').trim();
-                    let words = item.description.split(/\s+/);
-                    if (words.length > 150) item.description = words.slice(0, 150).join(" ") + ".";
                 }
 
-                // --- BAGIAN LOGIKA KEYWORD (MIN 39, MAX 42) ---
+                // --- LOGIKA KEYWORD: MIN 39, MAX 42 ---
                 if (useKey && item.keywords) {
                     let rawTags = item.keywords.split(',');
                     let singleTags = [];
@@ -403,18 +402,24 @@
                     });
                     
                     let uniqueTags = [...new Set(singleTags)];
+                    
+                    // Pastikan keyword topik utama masuk
                     const mainWords = topic.toLowerCase().split(/\s+/);
                     uniqueTags = uniqueTags.filter(t => !mainWords.includes(t));
                     uniqueTags = [...mainWords, ...uniqueTags];
 
-                    // JAMIN MINIMAL 39
+                    // LOGIKA MATEMATIKA: Tambah jika kurang dari 39
                     if (uniqueTags.length < 39) {
                         let needed = 39 - uniqueTags.length;
+                        // Ambil backup yang belum ada di uniqueTags
                         let extras = BACKUP_KEYWORDS.filter(k => !uniqueTags.includes(k)).slice(0, needed);
                         uniqueTags = [...uniqueTags, ...extras];
                     }
-                    // JAMIN MAKSIMAL 42
-                    if (uniqueTags.length > 42) uniqueTags = uniqueTags.slice(0, 42);
+                    
+                    // LOGIKA MATEMATIKA: Potong jika lebih dari 42
+                    if (uniqueTags.length > 42) {
+                        uniqueTags = uniqueTags.slice(0, 42);
+                    }
                     
                     item.keywords = uniqueTags.join(', ');
                 }
@@ -422,7 +427,6 @@
             });
         }
 
-        // --- RENDER DENGAN COPY FIX ---
         function renderResults(items) {
             const container = document.getElementById('result-area');
             const hasDesc = items.length > 0 && items[0].description !== undefined;
@@ -435,9 +439,9 @@
 
                 let keyHtml = '', descHtml = '';
 
-                // Perbaikan warna indikator jumlah keyword sesuai request (39-42 = Hijau)
                 if (hasKey && item.keywords) {
                     const count = item.keywords.split(',').length;
+                    // Indikator warna: Hijau jika 39-42, Merah jika di luar itu
                     const countColor = (count >= 39 && count <= 42) ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
                     keyHtml = `
                         <div class="mt-4 pt-4 border-t border-gray-100 relative">
@@ -478,7 +482,7 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // --- FUNGSI DOWNLOAD CSV (SESUAI LOGIKA CHECKBOX & PAKAI BLOB) ---
+        // --- FUNGSI DOWNLOAD CSV (SESUAI LOGIKA CHECKBOX) ---
         function downloadCSV() {
             if (!allResults || allResults.length === 0) {
                 alert("Data kosong! Silakan generate terlebih dahulu.");
@@ -488,7 +492,8 @@
             const useDesc = document.getElementById('gen-desc').checked;
             const useKey = document.getElementById('gen-key').checked;
 
-            let headers = ["Title"]; 
+            // Header dinamis
+            let headers = ["Title"];
             if (useDesc) headers.push("Description");
             if (useKey) headers.push("Keywords");
 
@@ -497,14 +502,17 @@
             allResults.forEach(item => {
                 let row = [];
                 
+                // 1. Title (Selalu ada)
                 let cleanTitle = (item.title || '').replace(/"/g, '""');
                 row.push(`"${cleanTitle}"`);
                 
+                // 2. Description (Cek kondisi)
                 if (useDesc) {
                     let cleanDesc = (item.description || '').replace(/"/g, '""').replace(/\n/g, ' '); 
                     row.push(`"${cleanDesc}"`);
                 }
 
+                // 3. Keywords (Cek kondisi)
                 if (useKey) {
                     let cleanKey = (item.keywords || '').replace(/"/g, '""');
                     row.push(`"${cleanKey}"`);
@@ -518,6 +526,7 @@
             
             const topic = document.getElementById('topic-input').value.replace(/[^a-zA-Z0-9]/g, '_') || 'metadata';
             
+            // Nama file dinamis
             let type = "TITLE_ONLY";
             if (useDesc && useKey) type = "FULL";
             else if (useDesc) type = "DESC";
