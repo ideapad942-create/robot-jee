@@ -194,12 +194,10 @@
             setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        // --- FUNGSI COPY (Updated agar tidak Failed) ---
+        // --- FUNGSI COPY (Safe Mode) ---
         function copyToClipboard(encodedText) {
             try {
                 const text = decodeURIComponent(encodedText);
-                
-                // Coba cara modern
                 if (navigator.clipboard && window.isSecureContext) {
                     navigator.clipboard.writeText(text).then(() => {
                         showToast("Copied!");
@@ -241,7 +239,6 @@
             if (!apiKey) return alert("API Key is required! Masukkan key di Tab 1.");
             if (!topic) return alert("Main Keyword is required!");
 
-            // Auto Save Key jika user lupa klik save
             localStorage.setItem('groqApiKey', apiKey);
 
             allResults = [];
@@ -253,7 +250,7 @@
             
             const batchSize = 5; 
             let currentCount = 0;
-            let failureCount = 0; // Untuk mendeteksi stuck parah
+            let failureCount = 0;
 
             updateProgress(0, totalTarget, "Initializing...");
 
@@ -264,11 +261,9 @@
                 updateProgress(currentCount, totalTarget, `Generating batch ${currentCount + 1}-${currentCount + thisBatchSize}...`);
 
                 try {
-                    // FUNGSI RETRY DI SINI
                     const batchResult = await fetchWithRetry(apiKey, topic, thisBatchSize, useDesc, useKey, currentCount);
                     
                     if (batchResult && batchResult.length > 0) {
-                        // Filter Duplikat
                         const uniqueBatch = batchResult.filter(newItem => 
                             !allResults.some(existing => existing.title === newItem.title)
                         );
@@ -276,21 +271,19 @@
                         allResults = [...allResults, ...uniqueBatch];
                         currentCount += uniqueBatch.length; 
                         renderResults(allResults); 
-                        failureCount = 0; // Reset fail count jika berhasil
+                        failureCount = 0; 
                     }
                 } catch (error) {
                     console.error("Batch failed:", error);
                     failureCount++;
-                    // Jika gagal berturut-turut 3x, hentikan
                     if (failureCount >= 3) {
-                        alert("Terjadi kesalahan koneksi berulang kali. Proses dihentikan. Cek API Key atau koneksi internet.");
+                        alert("Terjadi kesalahan koneksi berulang kali. Proses dihentikan.");
                         isProcessing = false;
                         break;
                     }
                     showToast(`Batch failed, retrying... (${failureCount})`);
                 }
                 
-                // Jeda lebih lama (3 detik) untuk menghindari Rate Limit Groq
                 await new Promise(r => setTimeout(r, 3000));
             }
 
@@ -310,21 +303,19 @@
             document.getElementById('result-count').innerText = `(${current} items)`;
         }
 
-        // --- SISTEM ANTI STUCK (RETRY MECHANISM) ---
         async function fetchWithRetry(apiKey, topic, count, useDesc, useKey, offset, retries = 3) {
             try {
                 return await fetchFromGroq(apiKey, topic, count, useDesc, useKey, offset);
             } catch (err) {
                 if (retries > 0) {
-                    console.log(`Retrying... (${retries} attempts left)`);
-                    await new Promise(r => setTimeout(r, 2000)); // Tunggu 2 detik sebelum retry
+                    await new Promise(r => setTimeout(r, 2000));
                     return fetchWithRetry(apiKey, topic, count, useDesc, useKey, offset, retries - 1);
                 }
                 throw err;
             }
         }
 
-        // --- LOGIKA GENERATE ASLI (DIKEMBALIKAN SEPERTI SEMULA) ---
+        // --- LOGIKA GENERATE ASLI (TIDAK DIUBAH) ---
         async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, offset) {
             
             let outputFields = [`"title": "Clean functional title..."`];
@@ -422,7 +413,7 @@
             });
         }
 
-        // --- RENDER FUNCTION (Diperbaiki agar Copy Aman) ---
+        // --- RENDER DENGAN COPY FIX ---
         function renderResults(items) {
             const container = document.getElementById('result-area');
             const hasDesc = items.length > 0 && items[0].description !== undefined;
@@ -477,52 +468,69 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // --- FUNGSI DOWNLOAD CSV BARU (Menggunakan BLOB agar tidak Error) ---
+        // --- PERBAIKAN TOTAL FUNGSI DOWNLOAD CSV ---
         function downloadCSV() {
-            if (allResults.length === 0) return;
-            const hasDesc = document.getElementById('gen-desc').checked;
-            const hasKey = document.getElementById('gen-key').checked;
-            let headers = ["Title"];
-            if (hasDesc) headers.push("Description");
-            if (hasKey) headers.push("Keywords");
+            // Cek apakah ada data
+            if (!allResults || allResults.length === 0) {
+                alert("Data kosong! Silakan generate terlebih dahulu.");
+                return;
+            }
 
-            // Menggunakan array untuk baris agar lebih rapi
-            let csvRows = [];
-            csvRows.push(headers.join(","));
+            try {
+                const hasDesc = document.getElementById('gen-desc').checked;
+                const hasKey = document.getElementById('gen-key').checked;
+                let headers = ["Title"];
+                if (hasDesc) headers.push("Description");
+                if (hasKey) headers.push("Keywords");
 
-            allResults.forEach(item => {
-                let row = [];
-                // Escape double quotes dengan benar (") menjadi ("")
-                let cleanTitle = (item.title || '').replace(/"/g, '""');
-                row.push(`"${cleanTitle}"`);
+                // Susun isi CSV
+                let csvContent = "\uFEFF" + headers.join(",") + "\n"; // Header dengan BOM untuk support UTF-8 di Excel
+
+                allResults.forEach(item => {
+                    let row = [];
+                    // Penting: Bungkus dengan kutip dua (") dan ganti kutip di dalam teks menjadi double ("")
+                    // Ini standar CSV agar tidak rusak jika ada koma atau enter di dalam teks
+                    let cleanTitle = (item.title || '').replace(/"/g, '""');
+                    row.push(`"${cleanTitle}"`);
+                    
+                    if (hasDesc) {
+                        let cleanDesc = (item.description || '').replace(/"/g, '""').replace(/\n/g, ' '); 
+                        row.push(`"${cleanDesc}"`);
+                    }
+                    if (hasKey) {
+                        let cleanKey = (item.keywords || '').replace(/"/g, '""');
+                        row.push(`"${cleanKey}"`);
+                    }
+                    csvContent += row.join(",") + "\n";
+                });
+
+                // Buat File Blob
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 
-                if (hasDesc) {
-                    let cleanDesc = (item.description || '').replace(/"/g, '""');
-                    row.push(`"${cleanDesc}"`);
-                }
-                if (hasKey) {
-                    let cleanKey = (item.keywords || '').replace(/"/g, '""');
-                    row.push(`"${cleanKey}"`);
-                }
-                csvRows.push(row.join(","));
-            });
+                // Buat Link Download
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                
+                // Nama File
+                const topic = document.getElementById('topic-input').value.replace(/[^a-zA-Z0-9]/g, '_') || 'metadata';
+                const timestamp = new Date().toISOString().slice(0,10);
+                link.setAttribute("href", url);
+                link.setAttribute("download", `METADATA_${topic}_${timestamp}.csv`);
+                
+                // Eksekusi Klik
+                document.body.appendChild(link);
+                link.click();
+                
+                // Bersihkan (Penting: Pakai Timeout agar browser sempat download)
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                }, 100);
 
-            const csvString = "\uFEFF" + csvRows.join("\n");
-            
-            // Menggunakan Blob
-            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            
-            const topic = document.getElementById('topic-input').value.replace(/\s+/g,'_');
-            const type = (hasDesc && hasKey) ? "FULL" : (hasDesc ? "DESC" : (hasKey ? "KEY" : "TITLE_ONLY"));
-            
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = `METADATA_CLEAN_${topic}_${type}.csv`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+            } catch (err) {
+                console.error("Download Error:", err);
+                alert("Gagal mengunduh CSV. Cek console untuk detail.");
+            }
         }
     </script>
 </body>
