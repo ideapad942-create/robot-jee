@@ -172,13 +172,18 @@
             showToast("API Key Berhasil Disimpan! ✅");
         }
 
+        // --- DIUPDATE: Menambah kata cadangan agar pasti bisa mencapai minimal 39 ---
         const BACKUP_KEYWORDS = [
             "footage", "video", "clip", "stock", "creative", "digital", "multimedia", 
             "content", "visual", "art", "design", "graphic", "backdrop", "effect",
             "background", "abstract", "modern", "production", "element",
             "motion", "animation", "style", "concept", "overlay", "template", 
-            "cinematic", "post", "editing", "sequence", "layer", "render", "media"
+            "cinematic", "post", "editing", "sequence", "layer", "render", "media",
+            "presentation", "corporate", "commercial", "marketing", "advertising", 
+            "promo", "branding", "business", "technology", "display", "monitor", 
+            "screen", "view", "scene", "shot"
         ];
+        
         const FORBIDDEN_KEYS = ["hd", "4k", "8k", "1080p", "720p", "high", "definition", "resolution", "uhd"];
 
         function openTab(tabId) {
@@ -195,12 +200,10 @@
             setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        // --- FUNGSI COPY (Updated agar tidak Failed & Support Special Characters) ---
+        // --- FUNGSI COPY (Safe Mode) ---
         function copyToClipboard(encodedText) {
             try {
                 const text = decodeURIComponent(encodedText);
-                
-                // Coba cara modern
                 if (navigator.clipboard && window.isSecureContext) {
                     navigator.clipboard.writeText(text).then(() => {
                         showToast("Copied!");
@@ -318,7 +321,6 @@
             }
         }
 
-        // --- LOGIKA GENERATE ASLI (TIDAK DIUBAH) ---
         async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, offset) {
             
             let outputFields = [`"title": "Clean functional title..."`];
@@ -388,6 +390,7 @@
                     if (words.length > 150) item.description = words.slice(0, 150).join(" ") + ".";
                 }
 
+                // --- BAGIAN LOGIKA KEYWORD (MIN 39, MAX 42) ---
                 if (useKey && item.keywords) {
                     let rawTags = item.keywords.split(',');
                     let singleTags = [];
@@ -404,12 +407,15 @@
                     uniqueTags = uniqueTags.filter(t => !mainWords.includes(t));
                     uniqueTags = [...mainWords, ...uniqueTags];
 
+                    // JAMIN MINIMAL 39
                     if (uniqueTags.length < 39) {
                         let needed = 39 - uniqueTags.length;
                         let extras = BACKUP_KEYWORDS.filter(k => !uniqueTags.includes(k)).slice(0, needed);
                         uniqueTags = [...uniqueTags, ...extras];
                     }
+                    // JAMIN MAKSIMAL 42
                     if (uniqueTags.length > 42) uniqueTags = uniqueTags.slice(0, 42);
+                    
                     item.keywords = uniqueTags.join(', ');
                 }
                 return item;
@@ -429,6 +435,7 @@
 
                 let keyHtml = '', descHtml = '';
 
+                // Perbaikan warna indikator jumlah keyword sesuai request (39-42 = Hijau)
                 if (hasKey && item.keywords) {
                     const count = item.keywords.split(',').length;
                     const countColor = (count >= 39 && count <= 42) ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
@@ -471,56 +478,46 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // --- FUNGSI DOWNLOAD CSV (PERBAIKAN LOGIKA & BLOB) ---
+        // --- FUNGSI DOWNLOAD CSV (SESUAI LOGIKA CHECKBOX & PAKAI BLOB) ---
         function downloadCSV() {
             if (!allResults || allResults.length === 0) {
                 alert("Data kosong! Silakan generate terlebih dahulu.");
                 return;
             }
 
-            // 1. Cek apa yang dicentang user
             const useDesc = document.getElementById('gen-desc').checked;
             const useKey = document.getElementById('gen-key').checked;
 
-            // 2. Tentukan Header CSV sesuai centangan
-            let headers = ["Title"]; // Title selalu ada
+            let headers = ["Title"]; 
             if (useDesc) headers.push("Description");
             if (useKey) headers.push("Keywords");
 
-            // 3. Susun isi CSV dengan BOM (Byte Order Mark) untuk UTF-8 support
             let csvContent = "\uFEFF" + headers.join(",") + "\n";
 
             allResults.forEach(item => {
                 let row = [];
                 
-                // A. Masukkan Title (Selalu)
-                // Escape double quotes (") -> ("") agar CSV valid
                 let cleanTitle = (item.title || '').replace(/"/g, '""');
                 row.push(`"${cleanTitle}"`);
                 
-                // B. Masukkan Description (HANYA JIKA DICENTANG)
                 if (useDesc) {
                     let cleanDesc = (item.description || '').replace(/"/g, '""').replace(/\n/g, ' '); 
                     row.push(`"${cleanDesc}"`);
                 }
 
-                // C. Masukkan Keywords (HANYA JIKA DICENTANG)
                 if (useKey) {
                     let cleanKey = (item.keywords || '').replace(/"/g, '""');
                     row.push(`"${cleanKey}"`);
                 }
 
-                // Gabungkan kolom
                 csvContent += row.join(",") + "\n";
             });
 
-            // 4. Proses Download menggunakan BLOB (Agar tidak Failed)
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = window.URL.createObjectURL(blob);
             
             const topic = document.getElementById('topic-input').value.replace(/[^a-zA-Z0-9]/g, '_') || 'metadata';
             
-            // Penamaan file
             let type = "TITLE_ONLY";
             if (useDesc && useKey) type = "FULL";
             else if (useDesc) type = "DESC";
@@ -533,7 +530,6 @@
             document.body.appendChild(link);
             link.click();
             
-            // Cleanup memory
             setTimeout(() => {
                 document.body.removeChild(link);
                 window.URL.revokeObjectURL(url);
