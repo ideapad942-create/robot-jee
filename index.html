@@ -153,7 +153,7 @@
 
     <div id="toast">Notification</div>
     
-<script>
+    <script>
         let allResults = [];
         let isProcessing = false;
         
@@ -195,10 +195,12 @@
             setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        // --- FUNGSI COPY (SUPAYA BISA COPY) ---
+        // --- FUNGSI COPY (Updated agar tidak Failed & Support Special Characters) ---
         function copyToClipboard(encodedText) {
             try {
                 const text = decodeURIComponent(encodedText);
+                
+                // Coba cara modern
                 if (navigator.clipboard && window.isSecureContext) {
                     navigator.clipboard.writeText(text).then(() => {
                         showToast("Copied!");
@@ -469,7 +471,7 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // --- FUNGSI DOWNLOAD CSV (PERBAIKAN LOGIKA SESUAI PERMINTAAN) ---
+        // --- FUNGSI DOWNLOAD CSV (PERBAIKAN LOGIKA & BLOB) ---
         function downloadCSV() {
             if (!allResults || allResults.length === 0) {
                 alert("Data kosong! Silakan generate terlebih dahulu.");
@@ -485,14 +487,14 @@
             if (useDesc) headers.push("Description");
             if (useKey) headers.push("Keywords");
 
-            // 3. Susun isi CSV
-            let csvRows = [];
-            csvRows.push(headers.join(",")); // Masukkan baris header
+            // 3. Susun isi CSV dengan BOM (Byte Order Mark) untuk UTF-8 support
+            let csvContent = "\uFEFF" + headers.join(",") + "\n";
 
             allResults.forEach(item => {
                 let row = [];
                 
                 // A. Masukkan Title (Selalu)
+                // Escape double quotes (") -> ("") agar CSV valid
                 let cleanTitle = (item.title || '').replace(/"/g, '""');
                 row.push(`"${cleanTitle}"`);
                 
@@ -508,18 +510,17 @@
                     row.push(`"${cleanKey}"`);
                 }
 
-                // Gabungkan kolom dengan koma
-                csvRows.push(row.join(","));
+                // Gabungkan kolom
+                csvContent += row.join(",") + "\n";
             });
 
-            // 4. Proses Download (Pakai Blob biar tidak error)
-            const csvString = "\uFEFF" + csvRows.join("\n");
-            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            // 4. Proses Download menggunakan BLOB (Agar tidak Failed)
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = window.URL.createObjectURL(blob);
             
             const topic = document.getElementById('topic-input').value.replace(/[^a-zA-Z0-9]/g, '_') || 'metadata';
             
-            // Penamaan file agar rapi
+            // Penamaan file
             let type = "TITLE_ONLY";
             if (useDesc && useKey) type = "FULL";
             else if (useDesc) type = "DESC";
@@ -532,6 +533,7 @@
             document.body.appendChild(link);
             link.click();
             
+            // Cleanup memory
             setTimeout(() => {
                 document.body.removeChild(link);
                 window.URL.revokeObjectURL(url);
