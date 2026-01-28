@@ -157,7 +157,6 @@
         let allResults = [];
         let isProcessing = false;
         
-        // Load API Key on Start
         window.onload = function() {
             const savedKey = localStorage.getItem('groqApiKey');
             if(savedKey) {
@@ -198,7 +197,6 @@
             setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        // --- FUNGSI COPY ---
         function copyToClipboard(encodedText) {
             try {
                 const text = decodeURIComponent(encodedText);
@@ -327,7 +325,6 @@
 
             const jsonTemplate = `{ "assets": [ { ${outputFields.join(', ')} } ] }`;
             
-            // --- LOGIKA TITLE DIUBAH SESUAI REQUEST ---
             const systemPrompt = `You are a Microstock Metadata Expert.
             TASK: Generate ${count} metadata items for: "${topic}".
             
@@ -336,10 +333,8 @@
                - FOLLOWED BY: Function, Usage, or Action (e.g., overlay, transition, background, effect).
                - STYLE: Organic, functional, professional.
                - DO NOT INCLUDE: Specific colors (Red, Blue), "HD", "4K", specific models.
-               - EXAMPLE (if topic is "Film Burn"): "Film burn overlay for vintage video transition effect".
-               - EXAMPLE (if topic is "Light Leak"): "Light leak background for organic camera flash effect".
 
-            ${useDesc ? `2. DESCRIPTION RULES: No quotation marks. Min 50 words.` : ''}
+            ${useDesc ? `2. DESCRIPTION RULES: No quotation marks. Min 50 characters, Max 100 characters.` : ''}
             
             ${useKey ? `3. KEYWORD RULES: NO "hd", "4k", "8k", "resolution". Single words only.` : ''}
 
@@ -380,7 +375,6 @@
 
                 if (item.title) {
                     let cleanTitle = item.title.replace(/"/g, '').trim();
-                    // MEMASTIKAN TITLE DIMULAI DENGAN TOPIC
                     const regex = new RegExp(`^${topic}`, 'i');
                     if (!regex.test(cleanTitle)) {
                         cleanTitle = `${topic} ${cleanTitle}`;
@@ -475,7 +469,6 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // --- FUNGSI DOWNLOAD CSV ---
         function downloadCSV() {
             if (!allResults || allResults.length === 0) {
                 alert("Data kosong! Silakan generate terlebih dahulu.");
