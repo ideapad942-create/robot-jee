@@ -171,6 +171,7 @@
             showToast("API Key Berhasil Disimpan! ✅");
         }
 
+        // DITAMBAHKAN: Daftar backup keyword diperbanyak untuk memastikan bisa mencapai 45 keyword
         const BACKUP_KEYWORDS = [
             "footage", "video", "clip", "stock", "creative", "digital", "multimedia", 
             "content", "visual", "art", "design", "graphic", "backdrop", "effect",
@@ -178,7 +179,9 @@
             "motion", "animation", "style", "concept", "overlay", "template", 
             "cinematic", "post", "editing", "sequence", "layer", "render", "media",
             "shot", "scene", "view", "display", "monitor", "technology", "business",
-            "commercial", "marketing", "advertising", "promo", "branding", "corporate"
+            "commercial", "marketing", "advertising", "promo", "branding", "corporate",
+            "presentation", "dynamic", "flow", "energy", "future", "clean", "minimal",
+            "pattern", "texture", "studio", "broadcast", "internet", "web", "streaming"
         ];
         
         const FORBIDDEN_KEYS = ["hd", "4k", "8k", "1080p", "720p", "high", "definition", "resolution", "uhd"];
@@ -321,26 +324,25 @@
         async function fetchFromGroq(apiKey, topic, count, useDesc, useKey, offset) {
             
             let outputFields = [`"title": "Title starts with topic..."`];
-            if (useDesc) outputFields.push(`"description": "Descriptive text..."`);
-            if (useKey) outputFields.push(`"keywords": "tag1, tag2..."`);
+            // DIUBAH: Prompt untuk deskripsi meminta panjang spesifik
+            if (useDesc) outputFields.push(`"description": "Text exactly 150-160 chars long..."`);
+            // DIUBAH: Prompt untuk keyword meminta banyak tag
+            if (useKey) outputFields.push(`"keywords": "tag1, tag2... (min 50 tags)"`);
 
             const jsonTemplate = `{ "assets": [ { ${outputFields.join(', ')} } ] }`;
             
-            // --- LOGIKA TITLE DIUBAH SESUAI REQUEST ---
             const systemPrompt = `You are a Microstock Metadata Expert.
             TASK: Generate ${count} metadata items for: "${topic}".
             
             1. TITLE RULES (STRICT):
                - MUST START WITH: "${topic}" exactly at the beginning.
-               - FOLLOWED BY: Function, Usage, or Action (e.g., overlay, transition, background, effect).
+               - FOLLOWED BY: Function, Usage, or Action.
                - STYLE: Organic, functional, professional.
-               - DO NOT INCLUDE: Specific colors (Red, Blue), "HD", "4K", specific models.
-               - EXAMPLE (if topic is "Film Burn"): "Film burn overlay for vintage video transition effect".
-               - EXAMPLE (if topic is "Light Leak"): "Light leak background for organic camera flash effect".
-
-            ${useDesc ? `2. DESCRIPTION RULES: No quotation marks. Min 50 words.` : ''}
+               - NO: Specific colors, "HD", "4K".
             
-            ${useKey ? `3. KEYWORD RULES: NO "hd", "4k", "8k", "resolution". Single words only.` : ''}
+            ${useDesc ? `2. DESCRIPTION RULES: No quotation marks. MUST BE DETAILED and length must be between 150 and 160 characters (strict).` : ''}
+            
+            ${useKey ? `3. KEYWORD RULES: NO "hd", "4k", "8k", "resolution". Generate at least 50 relevant single-word tags.` : ''}
 
             OUTPUT JSON ONLY:
             ${jsonTemplate}`;
@@ -379,7 +381,6 @@
 
                 if (item.title) {
                     let cleanTitle = item.title.replace(/"/g, '').trim();
-                    // MEMASTIKAN TITLE DIMULAI DENGAN TOPIC
                     const regex = new RegExp(`^${topic}`, 'i');
                     if (!regex.test(cleanTitle)) {
                         cleanTitle = `${topic} ${cleanTitle}`;
@@ -407,12 +408,14 @@
                     uniqueTags = uniqueTags.filter(t => !mainWords.includes(t));
                     uniqueTags = [...mainWords, ...uniqueTags];
 
-                    if (uniqueTags.length < 39) {
-                        let needed = 39 - uniqueTags.length;
+                    // DIUBAH: Logika pengisian minimum 45 keyword
+                    if (uniqueTags.length < 45) {
+                        let needed = 45 - uniqueTags.length;
                         let extras = BACKUP_KEYWORDS.filter(k => !uniqueTags.includes(k)).slice(0, needed);
                         uniqueTags = [...uniqueTags, ...extras];
                     }
-                    if (uniqueTags.length > 42) uniqueTags = uniqueTags.slice(0, 42);
+                    // DIUBAH: Logika pemotongan maksimum 47 keyword
+                    if (uniqueTags.length > 47) uniqueTags = uniqueTags.slice(0, 47);
                     
                     item.keywords = uniqueTags.join(', ');
                 }
@@ -434,7 +437,8 @@
 
                 if (hasKey && item.keywords) {
                     const count = item.keywords.split(',').length;
-                    const countColor = (count >= 39 && count <= 42) ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
+                    // DIUBAH: Indikator warna hijau jika 45-47
+                    const countColor = (count >= 45 && count <= 47) ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
                     keyHtml = `
                         <div class="mt-4 pt-4 border-t border-gray-100 relative">
                             <div class="flex justify-between items-center mb-2">
@@ -449,9 +453,11 @@
                 }
 
                 if (hasDesc && item.description) {
+                    const descLen = item.description.length;
                     descHtml = `
                         <div class="mt-3 relative group/desc">
-                            <div class="flex justify-end mb-1 absolute top-2 right-2 opacity-0 group-hover/desc:opacity-100 transition">
+                            <div class="flex justify-end gap-2 mb-1 absolute top-2 right-2 opacity-0 group-hover/desc:opacity-100 transition">
+                                <span class="text-[10px] bg-white border px-1 rounded text-gray-400 self-center">${descLen} chars</span>
                                 <button onclick="copyToClipboard('${safeDesc}')" class="text-xs bg-white shadow-sm border hover:bg-blue-50 text-gray-600 px-2 py-1 rounded transition"><i class="fas fa-copy"></i></button>
                             </div>
                             <div class="bg-blue-50/40 p-4 rounded-lg border border-blue-100 text-sm text-gray-700 leading-relaxed">${item.description}</div>
