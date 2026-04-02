@@ -184,7 +184,10 @@
             "pattern", "texture", "studio", "broadcast", "internet", "web", "streaming"
         ];
         
-        const FORBIDDEN_KEYS = ["hd", "4k", "8k", "1080p", "720p", "high", "definition", "resolution", "uhd"];
+        const FORBIDDEN_KEYS = [
+    "hd", "4k", "8k", "1080p", "720p", "high", "definition", "resolution", "uhd",
+    "with", "and", "or", "of", "in", "on", "at", "to", "for", "by", "from", "the", "this", "that", "it", "is", "are", "a", "an"
+];
 
         function openTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -404,9 +407,13 @@
                     });
                     
                     let uniqueTags = [...new Set(singleTags)];
-                    const mainWords = topic.toLowerCase().split(/\s+/);
-                    uniqueTags = uniqueTags.filter(t => !mainWords.includes(t));
-                    uniqueTags = [...mainWords, ...uniqueTags];
+                    // Saring kata dari judul utama agar kata hubung tidak ikut masuk
+                    const mainWords = topic.toLowerCase().split(/\s+/).filter(w => {
+                        let cleanTitleWord = w.replace(/[^a-z0-9]/g, '');
+                        return cleanTitleWord.length > 1 && !FORBIDDEN_KEYS.includes(cleanTitleWord);
+                    });
+                    uniqueTags = uniqueTags.filter(t => !mainWords.includes(t));
+                    uniqueTags = [...mainWords, ...uniqueTags];
 
                     // DIUBAH: Logika pengisian minimum 45 keyword
                     if (uniqueTags.length < 45) {
